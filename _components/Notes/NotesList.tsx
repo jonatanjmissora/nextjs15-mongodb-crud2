@@ -3,20 +3,8 @@ import React from 'react'
 import { getCollection } from '../../_lib/mongoConnect';
 import Link from 'next/link';
 import NoteMenuForm from './NoteMenuForm';
-
-type UserType = {
-  _id: ObjectId;
-  username: string;
-  userpassword: string;
-}
-
-export type NoteType = {
-  _id: ObjectId;
-  title: string;
-  content: string;
-  author: string;
-  pinned: boolean;
-}
+import { UserType } from '../../_lib/types/user.types';
+import { NoteType } from '../../_lib/types/note.type';
 
 const getUserNotes = async (userId: ObjectId) => {
   const notesCollection = await getCollection("notes")
@@ -55,7 +43,7 @@ export default async function NotesList({ user }: { user: UserType }) {
                 <td>{note.content}</td>
                 <td>{note.pinned ? "true" : "false"}</td>
                 <td>
-                  <NoteMenuForm note={note} />
+                  <NoteMenuForm note={JSON.stringify(note)} />
                 </td>
               </tr>
 

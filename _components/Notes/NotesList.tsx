@@ -31,7 +31,7 @@ export default async function NotesList({ user }: { user: UserType }) {
     <div className='flex flex-col items-center justify-start w-1/2'>
       <div className="w-full py-8 flex justify-between items-center">
         <h2 className='text-3xl font-semibold tracking-wider'>Listado de Notas</h2>
-        <Link href={`/${user._id}/new-note`} className='btn btn-primary'>+</Link>
+        <Link href={`/note/new?userid=${user._id}`} className='btn btn-primary'>+</Link>
       </div>
       <div className="overflow-x-auto w-full">
         <table className="table">

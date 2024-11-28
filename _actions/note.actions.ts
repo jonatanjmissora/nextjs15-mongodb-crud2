@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { getCollection } from "../_lib/mongoConnect";
 import { NoteType } from "../_components/Notes/NotesList";
+import { ObjectId } from "mongodb";
 
 type ErrorType = {
   [key: string]: string;
@@ -57,4 +58,33 @@ export const createNote = async (prevState, formData: FormData) => {
 
   redirect("/")
 
+}
+
+export const editNote = async (prevState, formData: FormData) => {
+
+  const title = formData.get("title").toString()
+  const content = formData.get("content").toString()
+  const userId = formData.get("userid").toString()
+
+  const errors = { title: "", content: "" }
+
+  validateInput("title", title, errors)
+  validateInput("content", content, errors)
+
+  const newNote = {
+    title,
+    content,
+    author: userId,
+    pinned: false,
+  }
+  const notesCollection = await getCollection("notes")
+  const res = await notesCollection.updatesdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsd(newNote)
+  console.log({ res })
+
+  redirect("/")
+}
+
+export const getNoteById = async (noteId: string) => {
+  const collection = await getCollection("notes")
+  return await collection.findOne({ _id: new ObjectId(noteId) })
 }

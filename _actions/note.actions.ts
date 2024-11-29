@@ -83,7 +83,7 @@ export const createNote2 = async (prevState, formData: FormData) => {
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.insertOne(newNote)
   if (res.insertedId) return { success: true, prevState: null, errors: null }
-  else return { success: false, prevState: { title, content }, errors: "No se pudo crear la nota" }
+  else return { success: false, prevState: { title, content }, errors: {title: "", content: "No se pudo crear la nota"} }
 
 }
 

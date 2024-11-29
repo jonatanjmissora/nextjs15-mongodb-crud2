@@ -5,11 +5,15 @@ import Link from 'next/link';
 import NoteMenuForm from './NoteMenuForm';
 import { UserType } from '../../_lib/types/user.types';
 import { NoteType } from '../../_lib/types/note.type';
+import { unstable_cache } from 'next/cache';
 
-const getUserNotes = async (userId: ObjectId) => {
+const getUserNotes = unstable_cache(async (userId: ObjectId) => {
   const notesCollection = await getCollection("notes")
   return await notesCollection.find({ author: userId }).toArray()
-}
+},
+  ["notes"],
+  { revalidate: 60, tags: ["notes"] }
+)
 
 export default async function NotesList({ user }: { user: UserType }) {
 

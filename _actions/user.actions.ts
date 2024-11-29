@@ -74,7 +74,8 @@ export const register = async (prevState, formData: FormData) => {
   const ourTokenValue = jwt.sign({ username, _id: userId, exp: Math.floor(Date.now() / 1000) + 60 }, process.env.JWTSECRET)
 
   // log the user in by giving them a cookie
-  await cookies().set("usertoken", ourTokenValue, {
+  const cookie = await cookies()
+  cookie.set("usertoken", ourTokenValue, {
     httpOnly: true,
     sameSite: "strict",
     maxAge: 60 * 60 * 24 * 100,
@@ -86,7 +87,8 @@ export const register = async (prevState, formData: FormData) => {
 }
 
 export const logout = async function () {
-  cookies().delete("usertoken")
+  const cookie = await cookies()
+  cookie.delete("usertoken")
   redirect("/")
 }
 
@@ -121,7 +123,8 @@ export const login = async function (prevState, formData) {
   const ourTokenValue = jwt.sign({ username, _id: user._id.toString(), exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 100 }, process.env.JWTSECRET)
 
   // log the user in by giving them a cookie
-  cookies().set("usertoken", ourTokenValue, {
+  const cookie = await cookies()
+  cookie.set("usertoken", ourTokenValue, {
     httpOnly: true,
     sameSite: "strict",
     maxAge: 60 * 60 * 24 * 100,

@@ -2,9 +2,9 @@ import { getNoteById } from '../../../_actions/note.actions'
 import EditNoteForm from '../../../_components/Notes/EditNoteForm'
 import { NoteFixType } from '../../../_lib/types/note.type'
 
-export default async function EditNotePage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
+export default async function EditNotePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
 
-  const noteId = searchParams?.noteid
+  const noteId = (await searchParams).noteid
 
   let note = await getNoteById(noteId)
   const noteFixed = { ...note, _id: note._id.toString() } as NoteFixType

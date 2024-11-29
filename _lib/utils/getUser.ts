@@ -2,10 +2,10 @@ import jwt from "jsonwebtoken"
 import { cookies } from "next/headers"
 
 export default async function getUserFromCookie() {
-  const theCookie = cookies().get("usertoken")?.value
-  if (theCookie) {
+  const cookie = (await cookies()).get("usertoken")?.value
+  if (cookie) {
     try {
-      const decoded = jwt.verify(theCookie, process.env.JWTSECRET)
+      const decoded = jwt.verify(cookie, process.env.JWTSECRET)
       return decoded
     } catch (err) {
       return null

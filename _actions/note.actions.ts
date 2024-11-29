@@ -5,9 +5,7 @@ import { getCollection } from "../_lib/mongoConnect";
 import { ObjectId } from "mongodb";
 import { ErrorType } from "../_lib/types/error.type";
 import { NoteFixType } from "../_lib/types/note.type";
-import toast from "react-hot-toast";
-
-
+import { revalidateTag } from "next/cache";
 
 export const validateInput = async (label: string, inputValue: string, errors: ErrorType) => {
   let minChar, maxChar, labelStr
@@ -33,35 +31,6 @@ export const validateInput = async (label: string, inputValue: string, errors: E
 }
 
 export const createNote = async (prevState, formData: FormData) => {
-  const errors = { title: "", content: "" }
-  const title = formData.get("title").toString()
-  const content = formData.get("content").toString()
-  const userId = formData.get("userid").toString()
-
-
-  validateInput("title", title, errors)
-  validateInput("content", content, errors)
-
-  if (errors.title || errors.content) {
-    return { succcess: false, prevState: { title, content }, errors }
-  }
-
-  const newNote = {
-    title,
-    content,
-    author: userId,
-    pinned: false,
-  }
-  const notesCollection = await getCollection("notes")
-  const res = await notesCollection.insertOne(newNote)
-  console.log("server res", res)
-  if (res.insertedId) return { succcess: true, prevState: { title, content }, errors }
-  else throw { succcess: false, prevState: { title, content }, errors }
-
-
-}
-
-export const createNote2 = async (prevState, formData: FormData) => {
   const title = formData.get("title").toString()
   const content = formData.get("content").toString()
   const userId = formData.get("userid").toString()
@@ -82,8 +51,11 @@ export const createNote2 = async (prevState, formData: FormData) => {
   }
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.insertOne(newNote)
-  if (res.insertedId) return { success: true, prevState: null, errors: null }
-  else return { success: false, prevState: { title, content }, errors: {title: "", content: "No se pudo crear la nota"} }
+  if (res.insertedId) {
+    revalidateTag('notes')
+    return { success: true, prevState: null, errors: null }
+  }
+  else return { success: false, prevState: { title, content }, errors: { title: "", content: "No se pudo crear la nota" } }
 
 }
 
@@ -102,11 +74,7 @@ export const editNote = async (prevState, formData: FormData) => {
   validateInput("content", content, errors)
 
   if (errors.title !== "" || errors.content !== "")
-    return {
-      success: false,
-      prevState: { title, content },
-      errors
-    }
+    return { success: false, prevState: { title, content }, errors }
 
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.updateOne(
@@ -115,21 +83,23 @@ export const editNote = async (prevState, formData: FormData) => {
       $set: { "title": title, "content": content }
     }
   )
-  if (res.modifiedCount === 1)
-    redirect("/")
+  if (res.modifiedCount === 1) {
+    revalidateTag('notes')
+    return { success: true, prevState: null, errors: null }
+  }
   else
     return { success: false, prevState: null, errors: { title: "", content: "Error al editar nota" } }
 }
-
 
 export const deleteNote = async (prevState, formData: FormData) => {
   const noteId = formData.get("noteid").toString()
 
   const notesCollection = await getCollection("notes")
-  await notesCollection.deleteOne({ "_id": new ObjectId(noteId) })
+  const res = await notesCollection.deleteOne({ "_id": new ObjectId(noteId) })
+  if (res?.deletedCount !== 1) return { error: "No se pudo elimianr la nota" }
+  revalidateTag('notes')
   redirect("/")
 }
-
 
 export const getNoteById = async (noteId: string) => {
   const collection = await getCollection("notes")

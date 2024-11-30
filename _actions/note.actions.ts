@@ -1,6 +1,5 @@
 "use server"
 
-import { redirect } from "next/navigation";
 import { getCollection } from "../_lib/mongoConnect";
 import { ObjectId } from "mongodb";
 import { ErrorType } from "../_lib/types/error.type";
@@ -9,17 +8,17 @@ import { revalidateTag } from "next/cache";
 
 export const validateInput = async (label: string, inputValue: string, errors: ErrorType) => {
   let minChar, maxChar, labelStr
-  const regex = /^[a-zA-Z0-9!?¿¡ ]*$/
+  const regex = /^[a-zA-Z0-9-_!?¿¡ ]*$/
   let actualValue = inputValue.trim()
 
   if (label === "title") {
     minChar = 3
-    maxChar = 15
+    maxChar = 20
     labelStr = "titulo"
   }
   if (label === "content") {
     minChar = 4
-    maxChar = 30
+    maxChar = 100
     labelStr = "contenido"
   }
   if (typeof inputValue !== "string") actualValue = ""
@@ -98,7 +97,17 @@ export const deleteNote = async (prevState, formData: FormData) => {
   const res = await notesCollection.deleteOne({ "_id": new ObjectId(noteId) })
   if (res?.deletedCount !== 1) return { error: "No se pudo elimianr la nota" }
   revalidateTag('notes')
-  redirect("/")
+}
+
+export const pinNote = async (noteId: string) => {
+  const notesCollection = await getCollection("notes")
+  await notesCollection.updateOne(
+    { _id: new ObjectId(noteId) },
+    {
+      $set: { "pinned": true }
+    }
+  )
+  revalidateTag('notes')
 }
 
 export const getNoteById = async (noteId: string) => {

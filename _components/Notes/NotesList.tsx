@@ -1,11 +1,10 @@
 import { ObjectId } from 'mongodb'
-import React from 'react'
 import { getCollection } from '../../_lib/mongoConnect';
 import Link from 'next/link';
-import NoteMenuForm from './NoteMenuForm';
 import { UserType } from '../../_lib/types/user.types';
 import { NoteType } from '../../_lib/types/note.type';
 import { unstable_cache } from 'next/cache';
+import Note from './Note';
 
 const getUserNotes = unstable_cache(async (userId: ObjectId) => {
   const notesCollection = await getCollection("notes")
@@ -20,42 +19,24 @@ export default async function NotesList({ user }: { user: UserType }) {
   const notes = await getUserNotes(user._id) as NoteType[]
 
   return (
-    <div className='flex flex-col items-center justify-start w-1/2'>
+    <div className='flex flex-col items-center justify-start w-3/4'>
       <div className="w-full py-8 flex justify-between items-center">
         <h2 className='text-3xl font-semibold tracking-wider'>Listado de Notas</h2>
-        <Link href={`/note/new?userid=${user._id}`} className='btn btn-primary'>+</Link>
+        <Link href={`/note/new?userid=${user._id}`} className='btn btn-primary'><PlusSVG /></Link>
       </div>
-      <div className="overflow-x-auto w-full">
-        <table className="table">
-          {/* head */}
-          <thead>
-            <tr>
-              <th></th>
-              <th>Titulo</th>
-              <th>Contenido</th>
-              <th>favorito</th>
-              <th>acciones</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div className="w-full h-[60dvh] grid grid-cols-3 gap-8">
 
             {notes.map((note, index) =>
-
-              <tr key={index} className='hover'>
-                <th>{index + 1}</th>
-                <td>{note.title}</td>
-                <td>{note.content}</td>
-                <td>{note.pinned ? "true" : "false"}</td>
-                <td>
-                  <NoteMenuForm note={JSON.stringify(note)} />
-                </td>
-              </tr>
-
+              <Note key={note._id.toString()} actualNote={JSON.stringify(note)} index={index}/>
             )}
-
-          </tbody>
-        </table>
+          
       </div>
     </div>
+  )
+}
+
+const PlusSVG = () => {
+  return (
+    <svg  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth="2"  strokeLinecap="round"  strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
   )
 }

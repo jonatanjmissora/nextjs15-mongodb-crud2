@@ -3,7 +3,7 @@
 import { getCollection } from "../_lib/mongoConnect";
 import { ObjectId } from "mongodb";
 import { ErrorType } from "../_lib/types/error.type";
-import { NoteFixType } from "../_lib/types/note.type";
+import { NoteFixType, NoteType } from "../_lib/types/note.type";
 import { revalidateTag } from "next/cache";
 
 export const validateInput = async (label: string, inputValue: string, errors: ErrorType) => {
@@ -101,10 +101,12 @@ export const deleteNote = async (prevState, formData: FormData) => {
 
 export const pinNote = async (noteId: string) => {
   const notesCollection = await getCollection("notes")
+  const actualNote = await notesCollection.findOne({"_id": new ObjectId(noteId)}) as NoteType
+  const newPin = !actualNote.pinned
   await notesCollection.updateOne(
     { _id: new ObjectId(noteId) },
     {
-      $set: { "pinned": true }
+      $set: { "pinned": newPin }
     }
   )
   revalidateTag('notes')

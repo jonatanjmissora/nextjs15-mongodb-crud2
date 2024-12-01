@@ -32,7 +32,6 @@ export default async function NotesList({ user, page }: { user: NoteType, page: 
 
   const notes = await getUserNotes(user._id) as NoteType[]
   const notesToShow = sortedNotesByPin(notes, +page) as NoteType[]
-  console.log({ notesToShow })
 
   return (
     <div className='flex flex-col items-center justify-start w-3/4'>

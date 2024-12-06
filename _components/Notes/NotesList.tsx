@@ -11,7 +11,11 @@ const getUserNotes = unstable_cache(async (userId: ObjectId) => {
   const notesCollection = await getCollection("notes")
   return await notesCollection.find({ author: userId }).toArray()
 },
-  ["notes"]
+  ["notes"],
+  {
+    tags: ['notes'],
+    revalidate: 3600,
+  }
 )
 
 const sortedNotesByPin = (notes: NoteType[], page: number) => {

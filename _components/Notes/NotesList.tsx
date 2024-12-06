@@ -1,18 +1,17 @@
 import { ObjectId } from 'mongodb'
 import { getCollection } from '../../_lib/mongoConnect';
 import Link from 'next/link';
-import { UserType } from '../../_lib/types/user.types';
 import { NoteType } from '../../_lib/types/note.type';
 import { unstable_cache } from 'next/cache';
 import Note from './Note';
 import NotesPagination from './NotesPagination';
 
 const getUserNotes = unstable_cache(async (userId: ObjectId) => {
+
   const notesCollection = await getCollection("notes")
   return await notesCollection.find({ author: userId }).toArray()
 },
-  ["notes"],
-  { revalidate: 60, tags: ["notes"] }
+  ["notes"]
 )
 
 const sortedNotesByPin = (notes: NoteType[], page: number) => {
@@ -22,8 +21,8 @@ const sortedNotesByPin = (notes: NoteType[], page: number) => {
   notes.forEach(note => note.pinned ? pinnedNotes.push(note) : notPinnedNotes.push(note))
   const sortedNotes = [...pinnedNotes, ...notPinnedNotes]
 
-  const firstNoteIndex = ((page - 1) * 6)
-  const lastNoteIndex = (page - 1) * 6 + (notesPerPage - 1)
+  const firstNoteIndex = ((page - 1) * notesPerPage)
+  const lastNoteIndex = (page - 1) * notesPerPage + (notesPerPage - 1)
   const notesToShow = sortedNotes.slice(firstNoteIndex, lastNoteIndex + 1)
   return notesToShow
 }

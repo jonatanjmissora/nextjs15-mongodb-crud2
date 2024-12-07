@@ -5,33 +5,11 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { validateRegisterInput } from "../_lib/utils/validateRegisterInput";
+import { validateLoginInput } from "../_lib/utils/validateLoginInput";
+import setUserToCookie from "../_lib/utils/setUser";
 
-type ErrorType = {
-  [key: string]: string | number;
-}
 
-export const validateInput = async (label: string, inputValue: string, errors: ErrorType) => {
-  let minChar, maxChar, labelStr
-  const regex = /^[a-zA-Z0-9]*$/
-  let actualValue = inputValue.trim()
-
-  if (label === "username") {
-    minChar = 3
-    maxChar = 15
-    labelStr = "nombre"
-  }
-  if (label === "userpassword") {
-    minChar = 4
-    maxChar = 10
-    labelStr = "contraseña"
-  }
-  if (typeof inputValue !== "string") actualValue = ""
-  if (actualValue.length <= minChar) errors[label] = ` El ${labelStr} debe tener mas de ${minChar} caracteres.`
-  if (actualValue.length >= maxChar) errors[label] = ` El ${labelStr} debe tener menos de ${maxChar} caracteres.`
-  if (actualValue === "") errors[label] = ` Debes ingresar ${labelStr}.`
-
-  if (!regex.test(inputValue)) errors[label] += ` El ${labelStr} debe contener caracteres válidos}.`
-}
 
 export const getUsers = async () => {
   const userCollection = await getCollection("users")
@@ -46,42 +24,39 @@ export const register = async (prevState, formData: FormData) => {
   const username = formData.get("username").toString()
   let userpassword = formData.get("userpassword").toString()
 
-  const errors = { username: "", userpassword: "" }
+  const failObject = {
+    success: false,
+    prevState: { username, userpassword },
+    errors: { username: "", userpassword: "" }
+  }
 
-  validateInput("username", username, errors)
+  validateRegisterInput("username", username, failObject.errors)
 
   const usersCollection = await getCollection("users")
   const usernameInQuestion = await usersCollection.findOne({ username })
 
   if (usernameInQuestion) {
-    errors.username = " El usuario ya se encuentra registrado."
+    failObject.errors.username = " El usuario ya se encuentra registrado."
   }
 
-  validateInput("userpassword", userpassword, errors)
+  validateRegisterInput("userpassword", userpassword, failObject.errors)
 
-  if (errors.username || errors.userpassword) {
-    return { succcess: false, prevState: { username, userpassword }, errors }
+  if (failObject.errors.username || failObject.errors.userpassword) {
+    return failObject
   }
 
-  //hash password first
+  //si todo esta bien creo el usuario en la base de datos
   const salt = bcrypt.genSaltSync(10)
   userpassword = bcrypt.hashSync(userpassword, salt)
 
   const res = await usersCollection.insertOne({ username, userpassword })
-  const userId = res.insertedId.toString()
+  if (!res.insertedId.toString()) {
+    failObject.errors.userpassword = "Error en el servidor"
+    return failObject
+  }
 
-  //generate token
-  const ourTokenValue = jwt.sign({ username, _id: userId, exp: Math.floor(Date.now() / 1000) + 60 }, process.env.JWTSECRET)
-
-  // log the user in by giving them a cookie
-  const cookie = await cookies()
-  cookie.set("usertoken", ourTokenValue, {
-    httpOnly: true,
-    sameSite: "strict",
-    maxAge: 60 * 60 * 24 * 100,
-    secure: true
-  })
-
+  //tambien 
+  // await setUserToCookie(username, userpassword)
   redirect("/")
 
 }
@@ -92,45 +67,42 @@ export const logout = async function () {
   redirect("/")
 }
 
-export const login = async function (prevState, formData) {
+export const login = async function (prevState: any, formData: FormData) {
 
-  let username = formData.get("username")
-  let userpassword = formData.get("userpassword")
+  let username = formData.get("username").toString()
+  let userpassword = formData.get("userpassword").toString()
 
   const failObject = {
     success: false,
     prevState: { username, userpassword },
-    errors: "Nombre o contraseña inválidos."
+    errors: { username: "", userpassword: "" }
   }
 
-  if (typeof username != "string") username = ""
-  if (typeof userpassword != "string") userpassword = ""
+  //validacion de entrada
+  validateLoginInput("username", username, failObject.errors)
+  validateLoginInput("userpassword", userpassword, failObject.errors)
+  if (failObject.errors.username || failObject.errors.userpassword) {
+    console.log({ failObject })
+    return failObject
+  }
 
+  //verificacion de usuario registrado
   const collection = await getCollection("users")
   const user = await collection.findOne({ username })
-
   if (!user) {
+    failObject.errors.username = "usuario no registrado"
     return failObject
   }
 
+  //verificacion de contraseña almacenada
   const matchOrNot = bcrypt.compareSync(userpassword, user.userpassword)
-
   if (!matchOrNot) {
+    failObject.errors.userpassword = "La contraseña no corresponde al usuario"
     return failObject
   }
 
-  // create jwt value
-  const ourTokenValue = jwt.sign({ username, _id: user._id.toString(), exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 100 }, process.env.JWTSECRET)
-
-  // log the user in by giving them a cookie
-  const cookie = await cookies()
-  cookie.set("usertoken", ourTokenValue, {
-    httpOnly: true,
-    sameSite: "strict",
-    maxAge: 60 * 60 * 24 * 100,
-    secure: true
-  })
-
+  //si todo esta bien
+  await setUserToCookie(username, JSON.stringify(user._id))
   redirect("/")
 
 }

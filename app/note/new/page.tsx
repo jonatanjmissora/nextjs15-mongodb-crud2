@@ -1,4 +1,4 @@
-import NewNoteForm from '../../../_components/Notes/NewNoteForm'
+import NoteForm from '../../../_components/Forms/NoteForm'
 
 export default async function NewNotePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
 
@@ -6,7 +6,7 @@ export default async function NewNotePage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="h-full flex flex-col items-center justify-center">
-      <NewNoteForm userId={userId} />
+      <NoteForm userId={userId} />
     </div>
   )
 }

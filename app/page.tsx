@@ -1,4 +1,4 @@
-import LoginForm from '../_components/Auth/LoginForm'
+import LoginForm from '../_components/Forms/LoginForm'
 import NotesList from '../_components/Notes/NotesList'
 import getUserFromCookie from '../_lib/utils/getUser'
 

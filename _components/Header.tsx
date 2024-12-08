@@ -8,7 +8,7 @@ export default async function Header() {
   const user = await getUserFromCookie()
 
   return (
-    <div className="navbar bg-base-100 px-4">
+    <div className="navbar bg-slate-900 px-4">
   <div className="flex-1">
     <Link href={"/"} className="btn btn-ghost text-xl">K@to</Link>
   </div>

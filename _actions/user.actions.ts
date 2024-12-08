@@ -19,6 +19,7 @@ export const getUsers = async () => {
   return results
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const register = async (prevState, formData: FormData) => {
   const username = formData.get("username").toString()
@@ -50,22 +51,26 @@ export const register = async (prevState, formData: FormData) => {
   userpassword = bcrypt.hashSync(userpassword, salt)
 
   const res = await usersCollection.insertOne({ username, userpassword })
+ 
   if (!res.insertedId.toString()) {
     failObject.errors.userpassword = "Error en el servidor"
     return failObject
   }
 
-  //tambien 
-  // await setUserToCookie(username, userpassword)
+  await setUserToCookie(username, res.insertedId.toString())
   redirect("/")
 
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const logout = async function () {
   const cookie = await cookies()
   cookie.delete("usertoken")
   redirect("/")
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const login = async function (prevState: any, formData: FormData) {
 
@@ -102,7 +107,7 @@ export const login = async function (prevState: any, formData: FormData) {
   }
 
   //si todo esta bien
-  await setUserToCookie(username, JSON.stringify(user._id))
+  await setUserToCookie(username, user._id.toString())
   redirect("/")
 
 }

@@ -2,44 +2,29 @@
 
 import { getCollection } from "../_lib/mongoConnect";
 import { ObjectId } from "mongodb";
-import { ErrorType } from "../_lib/types/error.type";
 import { NoteFixType, NoteType } from "../_lib/types/note.type";
 import { revalidateTag } from "next/cache";
+import { validateNoteInput } from "../_lib/utils/validateNoteInput";
 
-export const validateInput = async (label: string, inputValue: string, errors: ErrorType) => {
-  let minChar, maxChar, labelStr
-  const regex = /^[a-zA-Z0-9-_!?¿¡ ]*$/
-  let actualValue = inputValue.trim()
 
-  if (label === "title") {
-    minChar = 3
-    maxChar = 20
-    labelStr = "titulo"
-  }
-  if (label === "content") {
-    minChar = 4
-    maxChar = 100
-    labelStr = "contenido"
-  }
-  if (typeof inputValue !== "string") actualValue = ""
-  if (actualValue.length <= minChar) errors[label] = ` El ${labelStr} debe tener mas de ${minChar} caracteres.`
-  if (actualValue.length >= maxChar) errors[label] = ` El ${labelStr} debe tener menos de ${maxChar} caracteres.`
-  if (actualValue === "") errors[label] = ` Debes ingresar ${labelStr}.`
-
-  if (!regex.test(inputValue)) errors[label] += ` El ${labelStr} debe contener caracteres válidos}.`
-}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const createNote = async (prevState, formData: FormData) => {
   const title = formData.get("title").toString()
   const content = formData.get("content").toString()
   const userId = formData.get("userid").toString()
 
-  const errors = { title: "", content: "" }
-  validateInput("title", title, errors)
-  validateInput("content", content, errors)
+  const failObject = {
+    success: false,
+    prevState: { title, content },
+    errors: { title: "", content: "" }
+  }
 
-  if (errors.title || errors.content) {
-    return { success: false, prevState: { title, content }, errors }
+  validateNoteInput("title", title, failObject.errors)
+  validateNoteInput("content", content, failObject.errors)
+
+  if (failObject.errors.title || failObject.errors.content) {
+    return failObject
   }
 
   const newNote = {
@@ -50,13 +35,22 @@ export const createNote = async (prevState, formData: FormData) => {
   }
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.insertOne(newNote)
-  if (res.insertedId) {
-    revalidateTag('notes')
-    return { success: true, prevState: null, errors: null }
-  }
-  else return { success: false, prevState: { title, content }, errors: { title: "", content: "No se pudo crear la nota" } }
 
+  if (!res.insertedId.toString()) {
+    failObject.errors.content = "Error en el servidor"
+    return failObject
+  }
+
+  revalidateTag('notes')
+  return {
+    success: true,
+    prevState: { title, content },
+    errors: { title: "", content: "" }
+  }
+    
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const editNote = async (prevState, formData: FormData) => {
 
@@ -65,15 +59,19 @@ export const editNote = async (prevState, formData: FormData) => {
   const jsonNote = formData.get("note").toString()
   const note = JSON.parse(jsonNote) as NoteFixType
 
-  if (note.title === title && note.content === content) return { success: null, prevState: null, errors: null }
+  if (note.title === title && note.content === content) return
 
-  const errors = { title: "", content: "" }
+  const failObject = {
+    success: false,
+    prevState: { title, content },
+    errors: { title: "", content: "" }
+  }
 
-  validateInput("title", title, errors)
-  validateInput("content", content, errors)
+  validateNoteInput("title", title, failObject.errors)
+  validateNoteInput("content", content, failObject.errors)
 
-  if (errors.title !== "" || errors.content !== "")
-    return { success: false, prevState: { title, content }, errors }
+  if (failObject.errors.title !== "" || failObject.errors.content !== "")
+    return failObject
 
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.updateOne(
@@ -82,13 +80,20 @@ export const editNote = async (prevState, formData: FormData) => {
       $set: { "title": title, "content": content }
     }
   )
-  if (res.modifiedCount === 1) {
-    revalidateTag('notes')
-    return { success: true, prevState: null, errors: null }
+  if (res.modifiedCount !== 1) {
+    failObject.errors.content = "Error al editar nota"
+    return failObject
   }
-  else
-    return { success: false, prevState: null, errors: { title: "", content: "Error al editar nota" } }
+
+  revalidateTag('notes')
+  return {
+    success: true,
+    prevState: { title, content },
+    errors: { title: "", content: "" }
+  }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const deleteNote = async (prevState, formData: FormData) => {
   const noteId = formData.get("noteid").toString()
@@ -98,6 +103,8 @@ export const deleteNote = async (prevState, formData: FormData) => {
   if (res?.deletedCount !== 1) return { error: "No se pudo elimianr la nota" }
   revalidateTag('notes')
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const pinNote = async (noteId: string) => {
   const notesCollection = await getCollection("notes")
@@ -111,6 +118,8 @@ export const pinNote = async (noteId: string) => {
   )
   revalidateTag('notes')
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const getNoteById = async (noteId: string) => {
   const collection = await getCollection("notes")

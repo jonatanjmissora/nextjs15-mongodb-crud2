@@ -2,68 +2,31 @@
 
 import { getCollection } from "../_lib/mongoConnect";
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { validateRegisterInput } from "../_lib/utils/validateRegisterInput";
-import { validateLoginInput } from "../_lib/utils/validateLoginInput";
 import setUserToCookie from "../_lib/utils/setUser";
+import { userSchema, UserType } from "../_lib/schema/schema.user";
+import { getErrorMessage } from "../_lib/utils/getErrorMessage";
 
-
-
-export const getUsers = async () => {
-  const userCollection = await getCollection("users")
-  const results = await userCollection
-    .find({})
-    .toArray()
-  return results
+export type ResponseType = {
+  success: boolean;
+  prevState: { username: string, userpassword: string },
+  errors: { username: string, userpassword: string }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const register = async (prevState, formData: FormData) => {
-  const username = formData.get("username").toString()
-  let userpassword = formData.get("userpassword").toString()
-
-  const failObject = {
-    success: false,
-    prevState: { username, userpassword },
-    errors: { username: "", userpassword: "" }
-  }
-
-  validateRegisterInput("username", username, failObject.errors)
-
+const getUserByName = async (name: string) => {
   const usersCollection = await getCollection("users")
-  const usernameInQuestion = await usersCollection.findOne({ username })
-
-  if (usernameInQuestion) {
-    failObject.errors.username = " El usuario ya se encuentra registrado."
-  }
-
-  validateRegisterInput("userpassword", userpassword, failObject.errors)
-
-  if (failObject.errors.username || failObject.errors.userpassword) {
-    return failObject
-  }
-
-  //si todo esta bien creo el usuario en la base de datos
-  const salt = bcrypt.genSaltSync(10)
-  userpassword = bcrypt.hashSync(userpassword, salt)
-
-  const res = await usersCollection.insertOne({ username, userpassword })
- 
-  if (!res.insertedId.toString()) {
-    failObject.errors.userpassword = "Error en el servidor"
-    return failObject
-  }
-
-  await setUserToCookie(username, res.insertedId.toString())
-  redirect("/")
-
+  return await usersCollection.findOne({ username: name }) as UserType
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const insertUser = async (newUser: UserType) => {
+  const usersCollection = await getCollection("users")
+  return await usersCollection.insertOne(newUser)
+}
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const logout = async function () {
   const cookie = await cookies()
   cookie.delete("usertoken")
@@ -71,42 +34,91 @@ export const logout = async function () {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const register = async (prevState: ResponseType, formData: FormData) => {
 
-export const login = async function (prevState: any, formData: FormData) {
+  let username = formData.get("username") as string
+  let userpassword = formData.get("userpassword") as string
 
-  let username = formData.get("username").toString()
-  let userpassword = formData.get("userpassword").toString()
-
-  const failObject = {
+  const registerResponse = {
     success: false,
     prevState: { username, userpassword },
     errors: { username: "", userpassword: "" }
   }
 
-  //validacion de entrada
-  validateLoginInput("username", username, failObject.errors)
-  validateLoginInput("userpassword", userpassword, failObject.errors)
-  if (failObject.errors.username || failObject.errors.userpassword) {
-    console.log({ failObject })
-    return failObject
+  // server-validation
+  const { success, data, error } = userSchema.safeParse({ username, userpassword })
+  if (!success) {
+    const { username: userError, userpassword: passwordError } = error.flatten().fieldErrors
+    if (userError) registerResponse.errors.username = userError[0]
+    if (passwordError) registerResponse.errors.userpassword = passwordError[0]
+    return registerResponse
   }
 
-  //verificacion de usuario registrado
-  const collection = await getCollection("users")
-  const user = await collection.findOne({ username })
+  // verificacion de nombre registrado
+  const user = await getUserByName(username)
+  if (user) {
+    registerResponse.errors.username = "nombre ya registrado"
+    registerResponse.errors.userpassword = ""
+    return registerResponse
+  }
+
+  // si todo esta bien creo el usuario en la base de datos
+  const salt = bcrypt.genSaltSync(10)
+  userpassword = bcrypt.hashSync(userpassword, salt)
+
+  try {
+    //insertar en DB
+    const res = await insertUser(data)
+    if (!res.insertedId.toString()) {
+      registerResponse.errors.userpassword = "Error en el servidor"
+      return registerResponse
+    }
+    await setUserToCookie(username, res.insertedId.toString())
+    redirect("/")
+  } catch (error) {
+    registerResponse.errors.userpassword = getErrorMessage(error)
+    return registerResponse
+  }
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const login = async function (prevState: ResponseType, formData: FormData) {
+
+  let username = formData.get("username") as string
+  let userpassword = formData.get("userpassword") as string
+
+  const loginResponse = {
+    success: false,
+    prevState: { username, userpassword },
+    errors: { username: "", userpassword: "" }
+  }
+
+  // server-validation
+  const { success, data, error } = userSchema.safeParse({ username, userpassword })
+  if (!success) {
+    const { username: userError, userpassword: passwordError } = error.flatten().fieldErrors
+    if (userError) loginResponse.errors.username = userError[0]
+    if (passwordError) loginResponse.errors.userpassword = passwordError[0]
+    return loginResponse
+  }
+
+  // verificacion de usuario registrado
+  const user = await getUserByName(username)
   if (!user) {
-    failObject.errors.username = "usuario no registrado"
-    return failObject
+    loginResponse.errors.username = "usuario no registrado"
+    loginResponse.errors.userpassword = ""
+    return loginResponse
   }
 
-  //verificacion de contraseña almacenada
+  // verificacion de contraseña almacenada
   const matchOrNot = bcrypt.compareSync(userpassword, user.userpassword)
   if (!matchOrNot) {
-    failObject.errors.userpassword = "La contraseña no corresponde al usuario"
-    return failObject
+    loginResponse.errors.userpassword = "La contraseña no corresponde al usuario"
+    return loginResponse
   }
 
-  //si todo esta bien
+  // si todo esta bien
   await setUserToCookie(username, user._id.toString())
   redirect("/")
 

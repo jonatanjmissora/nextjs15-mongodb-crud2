@@ -7,19 +7,17 @@ import { getErrorMessage } from "../../_lib/utils/getErrorMessage"
 export const addTodo = async (newTodo: TodoType) => {
 
   //server validation
-  const result = todoSchema.safeParse(newTodo)
-
-  if (!result?.success) {
-    let errorMessage: ""
-    result.error.issues.forEach(issue =>
-      errorMessage = errorMessage + issue.path[0] + ":" + issue.message + "."
-    )
-    return { error: errorMessage }
+  let errors: { id: string, content: string }
+  const { success, data, error } = todoSchema.safeParse(newTodo)
+  if (!success) {
+    const { id, content } = error.flatten().fieldErrors
+    if (id) errors = { ...errors, id: id[0] }
+    if (content) errors = { ...errors, content: content[0] }
+    return { success: false, errors }
   }
-
   try {
     //insertar en DB
-    revalidatePath("/XXXZodForm")
+    revalidatePath("/")
   } catch (error) {
     return {
       error: getErrorMessage(error)

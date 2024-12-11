@@ -28,7 +28,7 @@ async function getDatabase() {
   return client.db("MyDatabase")
 }
 
-export async function getCollection(collectionName) {
+export async function getCollection(collectionName: string) {
   const db = await getDatabase()
   return db.collection(collectionName)
 }

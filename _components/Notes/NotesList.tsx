@@ -1,35 +1,9 @@
-import { ObjectId } from 'mongodb'
-import { getCollection } from '../../_lib/mongoConnect';
 import Link from 'next/link';
 import { NoteType } from '../../_lib/types/note.type';
-import { unstable_cache } from 'next/cache';
 import Note from './Note';
 import NotesPagination from './NotesPagination';
-
-const getUserNotes = unstable_cache(async (userId: ObjectId) => {
-
-  const notesCollection = await getCollection("notes")
-  return await notesCollection.find({ author: userId }).toArray()
-},
-  ["notes"],
-  {
-    tags: ['notes'],
-    revalidate: 3600,
-  }
-)
-
-const sortedNotesByPin = (notes: NoteType[], page: number) => {
-  const notesPerPage = 6
-  const pinnedNotes = []
-  const notPinnedNotes = []
-  notes.forEach(note => note.pinned ? pinnedNotes.push(note) : notPinnedNotes.push(note))
-  const sortedNotes = [...pinnedNotes, ...notPinnedNotes]
-
-  const firstNoteIndex = ((page - 1) * notesPerPage)
-  const lastNoteIndex = (page - 1) * notesPerPage + (notesPerPage - 1)
-  const notesToShow = sortedNotes.slice(firstNoteIndex, lastNoteIndex + 1)
-  return notesToShow
-}
+import { getUserNotes } from '../../_lib/utils/getUserNotes';
+import { sortedNotesByPin } from '../../_lib/utils/sortedNotes';
 
 export default async function NotesList({ user, page }: { user: NoteType, page: string }) {
 

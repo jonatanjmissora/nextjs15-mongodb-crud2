@@ -55,30 +55,28 @@ export const createNote = async (newNote: NoteType) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const editNote = async (prevState, formData: FormData) => {
-
-  const title = formData.get("title").toString()
-  const content = formData.get("content").toString()
-  const jsonNote = formData.get("note").toString()
-  const note = JSON.parse(jsonNote) as NoteFixType
-
-  if (note.title === title && note.content === content) return
-
+export const editNote = async (id: string, newNote: NoteType) => {
+  
   const failObject = {
     success: false,
-    prevState: { title, content },
+    prevState: { title: newNote.title, content: newNote.content },
     errors: { title: "", content: "" }
   }
 
-  validateNoteInput("title", title, failObject.errors)
-  validateNoteInput("content", content, failObject.errors)
-
-  if (failObject.errors.title !== "" || failObject.errors.content !== "")
+  const { success, data, error } = noteSchema.safeParse(newNote)
+  if (!success) {
+    const { title: titleError, content: contentError } = error.flatten().fieldErrors
+    if (titleError) failObject.errors.title = titleError[0]
+    if (contentError) failObject.errors.content = contentError[0]
     return failObject
+  }
 
+  try {
+    const {title, content} = data
+    console.log({data})
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.updateOne(
-    { _id: new ObjectId(note._id) },
+    { _id: new ObjectId(id) },
     {
       $set: { "title": title, "content": content }
     }
@@ -94,11 +92,16 @@ export const editNote = async (prevState, formData: FormData) => {
     prevState: { title, content },
     errors: { title: "", content: "" }
   }
+  } catch (error) {
+    failObject.errors.content = getErrorMessage(error)
+      return failObject
+  }
+  
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const deleteNote = async (prevState, formData: FormData) => {
+export const deleteNote = async (prevState: {error:string}, formData: FormData) => {
   const noteId = formData.get("noteid").toString()
 
   const notesCollection = await getCollection("notes")

@@ -11,9 +11,7 @@ export default function NoteMenuForm({ note }: { note: string }) {
   const noteFix = JSON.parse(note.toString()) as NoteType
 
   const clientAction = async (formData: FormData) => {
-    console.log("que pasa??")
     const res = await deleteNote(null, formData)
-    console.log({res})
     if (res?.error) toast.error(res.error)
     else toast.success("Nota eliminada exitosamente")
   }

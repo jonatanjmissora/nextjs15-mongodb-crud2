@@ -7,6 +7,9 @@ import SubmitBtn from "../SubmitBtn";
 import { createNote, editNote } from "../../_actions/note.actions";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { noteSchema } from "../../_lib/schema/schema.note";
+import { userSchema } from "../../_lib/schema/schema.user";
+import { todoSchema } from "../../app/XXXZodForm/todo.schema";
 
 type InputProps = {
   title: string;
@@ -29,11 +32,30 @@ export default function NoteForm({ userId, note }: { userId?: string, note?: Not
 
     const title = formData.get("title") as string
     const content = formData.get("content") as string
-    setInputsValues({ title, content })
+    const newNote = {
+      title,
+      content,
+      author: userId,
+      pinned: false,
+    }
+
+    //client validation
+    const { success, data, error } = noteSchema.safeParse(newNote)
+    if (!success) {
+      const { title: titleError, content: contentError } = error.flatten().fieldErrors
+      setErrors({title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : ""})
+      setInputsValues({title, content})
+      toast.error("Error en el cliente")
+      return
+    }
+
+    // setInputsValues({ title, content })
 
     const res = isNewNote
-      ? await createNote(null, formData)
+      ? await createNote(data)
       : await editNote(null, formData)
+
+      console.log({res})
 
     if (res.success) {
       toast.success(`Nota ${isNewNote ? "creada" : "editada"} exitosamente`)

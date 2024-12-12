@@ -25,3 +25,15 @@ export const addTodo = async (newTodo: TodoType) => {
   }
 
 }
+
+type StateType = {
+  success: boolean | null;
+  prevState: { content: string };
+  errors: string;
+}
+
+export const addTodo2 = async (prevState: StateType, formData: FormData) => {
+  const content = formData.get("content")
+  if (content === "1") return { success: true, prevState: { content }, errors: "" }
+  return { success: false, prevState: { content }, errors: "Hubo un error" }
+}

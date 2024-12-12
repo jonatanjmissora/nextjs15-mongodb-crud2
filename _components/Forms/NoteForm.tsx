@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { noteSchema } from "../../_lib/schema/schema.note";
 import { userSchema } from "../../_lib/schema/schema.user";
-import { todoSchema } from "../../app/XXXZodForm/todo.schema";
+import { todoSchema } from "../../app/test/todo.schema";
 
 type InputProps = {
   title: string;
@@ -32,10 +32,13 @@ export default function NoteForm({ userId, note }: { userId?: string, note?: Not
 
     const title = formData.get("title") as string
     const content = formData.get("content") as string
+
+    if(!isNewNote && title === note.title && content === note.content) return
+
     const newNote = {
       title,
       content,
-      author: userId,
+      author: isNewNote ? formData.get("userid") as string : note.author,
       pinned: false,
     }
 
@@ -49,11 +52,9 @@ export default function NoteForm({ userId, note }: { userId?: string, note?: Not
       return
     }
 
-    // setInputsValues({ title, content })
-
     const res = isNewNote
       ? await createNote(data)
-      : await editNote(null, formData)
+      : await editNote(note._id, data)
 
       console.log({res})
 

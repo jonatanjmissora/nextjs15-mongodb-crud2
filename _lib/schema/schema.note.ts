@@ -2,11 +2,11 @@ import { ObjectId } from "mongodb"
 import { z } from "zod"
 
 const title = new RegExp(
-  /^[a-zA-Z0-9!-_?]*$/
+  /^[a-zA-Z0-9!-_? ]*$/
 )
 
 const content = new RegExp(
-  /^[a-zA-Z0-9#&*-_!?]*$/
+  /^[a-zA-Z0-9#&*-_!?. ]*$/
 )
 
 const author = new RegExp(
@@ -28,7 +28,7 @@ export const noteSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "El contenido debe tener mas de 1 caracter" })
-    .max(10, { message: "El contenido no puede tener mas de 50 caracteres" })
+    .max(50, { message: "El contenido no puede tener mas de 50 caracteres" })
     .regex(content, { message: "El contenido no es valida" }),
 
   author: z

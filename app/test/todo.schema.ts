@@ -2,7 +2,10 @@ import { z } from "zod"
 
 export const todoSchema = z.object({
 
-  id: z.number().optional(),
+  id: z
+    .number()
+    .min(1, { message: "Debe de tener mas de 1 caracter" })
+    .optional(),
   content: z
     .string()
     .trim()

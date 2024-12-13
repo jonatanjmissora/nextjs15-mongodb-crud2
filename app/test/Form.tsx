@@ -39,7 +39,7 @@ export default function Form() {
   }
 
   return (
-    <form action={clientAction} className='flex gap-4 flex-col'>
+    <form action={clientAction} className='flex gap-4 flex-col p-4 border m-4'>
       <h2 className='text-2xl font-bold tracking-wide'>Formulario</h2>
       <input className="hidden" name="id" defaultValue={2} />
       <p>{errors?.id && errors.id}</p>

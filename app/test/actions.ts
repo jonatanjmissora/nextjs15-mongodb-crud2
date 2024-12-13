@@ -10,30 +10,16 @@ export const addTodo = async (newTodo: TodoType) => {
   let errors: { id: string, content: string }
   const { success, data, error } = todoSchema.safeParse(newTodo)
   if (!success) {
-    const { id, content } = error.flatten().fieldErrors
-    if (id) errors = { ...errors, id: id[0] }
-    if (content) errors = { ...errors, content: content[0] }
+    const { id: idError, content: contentError } = error.flatten().fieldErrors
+    errors = { id: idError ? idError[0] : "", content: contentError ? contentError[0] : "" }
     return { success: false, errors }
   }
   try {
     //insertar en DB
     revalidatePath("/")
+    return { success: true, errors: { id: "", content: "" } }
   } catch (error) {
-    return {
-      error: getErrorMessage(error)
-    }
+    return { success: false, errors: { id: "", content: getErrorMessage(error) } }
   }
 
-}
-
-type StateType = {
-  success: boolean | null;
-  prevState: { content: string };
-  errors: string;
-}
-
-export const addTodo2 = async (prevState: StateType, formData: FormData) => {
-  const content = formData.get("content")
-  if (content === "1") return { success: true, prevState: { content }, errors: "" }
-  return { success: false, prevState: { content }, errors: "Hubo un error" }
 }

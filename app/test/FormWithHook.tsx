@@ -1,37 +1,52 @@
 "use client"
 
-import { useActionState, useEffect, useState } from "react"
-import { addTodo, addTodo2 } from "./actions"
+import { useActionState, useState } from "react"
+import { addTodo } from "./actions"
 import toast from "react-hot-toast"
+import { todoSchema } from "./todo.schema"
 
 export default function FormWithHook() {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({ id: "", content: "" })
-  const [formState, serverAction, isPending] = useActionState(addTodo2, {
-    success: null,
-    prevState: { content: "" },
-    errors: ""
-  })
+  const [formState, formAction, isPending] = useActionState(async (prevState, formData: FormData) => {
+    setErrors({ id: "", content: "" })
+    const newTodo = Object.fromEntries(formData.entries())
 
-  useEffect(() => {
-    if (formState?.success === true) toast.success("Correcto")
-    else if (formState?.success === false) toast.error("Incorrecto")
-  }, [formState])
+    //client validation
+    const { success, data, error } = todoSchema.safeParse({ ...newTodo, id: Number(newTodo.id) })
+    if (!success) {
+      const { id: idError, content: contentError } = error.flatten().fieldErrors
+      setErrors({
+        id: idError ? idError[0] : "",
+        content: contentError ? contentError[0] : ""
+      })
+      toast.error("Error Cliente")
+      return {
+        success: false,
+        prevState: newTodo,
+      }
+    }
+    toast.success("Success Ciente")
 
-  const clientAction = async (formData: FormData) => {
-    //aca hago la validacion del cliente
-    serverAction(formData)
-    //respondo la validacion del servidor, dentro del formState
-  }
+    const serverResult = await addTodo(data)
+    console.log({ serverResult })
+    if (!serverResult?.success && serverResult?.errors) {
+      toast.error("Error Servidor")
+    }
+
+  }, null)
 
   return (
-    <form action={clientAction} className='flex gap-4 flex-col'>
+    <form action={formAction} className='flex gap-4 flex-col p-4 border m-4'>
       <h2 className='text-2xl font-bold tracking-wide'>Formulario 2</h2>
-      <input className="hidden" name="id" defaultValue={2} />
+
+      <input className="input input-primary" type="number" name="id" defaultValue={formState?.prevState?.id} />
       <p>{errors?.id && errors.id}</p>
-      <input className="input input-primary" type="text" name="content" />
-      {formState?.errors && <p>{formState.errors}</p>}
-      <button className='btn btn-primary' type="submit">Crear</button>
+
+      <input className="input input-primary" type="text" name="content" defaultValue={formState?.prevState?.content} />
+      <p>{errors?.content && errors.content}</p>
+
+      <button className='btn btn-primary' type="submit" disabled={isPending}>{isPending ? "..." : "Crear"}</button>
     </form>
   )
 }

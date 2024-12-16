@@ -10,7 +10,7 @@ const content = new RegExp(
 )
 
 const author = new RegExp(
-  /^[a-zA-Z0-9].{8,}$/ 
+  /^[a-zA-Z0-9].{8,}$/
 )
 
 export const noteSchema = z.object({
@@ -28,7 +28,7 @@ export const noteSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "El contenido debe tener mas de 1 caracter" })
-    .max(50, { message: "El contenido no puede tener mas de 50 caracteres" })
+    .max(100, { message: "El contenido no puede tener mas de 100 caracteres" })
     .regex(content, { message: "El contenido no es valida" }),
 
   author: z

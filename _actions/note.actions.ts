@@ -2,9 +2,7 @@
 
 import { getCollection } from "../_lib/mongoConnect";
 import { ObjectId } from "mongodb";
-import { NoteFixType } from "../_lib/types/note.type";
 import { revalidateTag } from "next/cache";
-import { validateNoteInput } from "../_lib/utils/validateNoteInput";
 import { noteSchema, NoteType } from "../_lib/schema/schema.note";
 import { getErrorMessage } from "../_lib/utils/getErrorMessage";
 
@@ -27,9 +25,10 @@ export const createNote = async (newNote: NoteType) => {
   const { success, data, error } = noteSchema.safeParse(newNote)
   if (!success) {
     const { title: titleError, content: contentError } = error.flatten().fieldErrors
-    console.log(success, data, titleError, contentError)
-    if (titleError) failObject.errors.title = titleError[0]
-    if (contentError) failObject.errors.content = contentError[0]
+    failObject.errors = { 
+      title: titleError ? titleError[0] : "", 
+      content: contentError ? contentError[0] : "" 
+    }
     return failObject
   }
 
@@ -68,8 +67,10 @@ export const editNote = async (id: string, newNote: NoteType) => {
   const { success, data, error } = noteSchema.safeParse(newNote)
   if (!success) {
     const { title: titleError, content: contentError } = error.flatten().fieldErrors
-    if (titleError) failObject.errors.title = titleError[0]
-    if (contentError) failObject.errors.content = contentError[0]
+    failObject.errors = { 
+      title: titleError ? titleError[0] : "", 
+      content: contentError ? contentError[0] : "" 
+    }
     return failObject
   }
 

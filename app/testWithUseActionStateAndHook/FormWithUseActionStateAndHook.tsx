@@ -1,17 +1,19 @@
 "use client"
 
-import { useActionState, useRef, useState } from "react"
-import { addTodo } from "./actions"
-import toast from "react-hot-toast"
+import { useActionState, useRef } from "react"
 import { todoSchema, TodoType } from "./todo.schema"
+import toast from "react-hot-toast"
+import { addTodo } from "./actions"
+
+
 
 type ResType = {
   success: boolean,
-  prevState: {id: number, content: string},
-  errors: {id: string, content: string}
-} 
+  prevState: { id: number, content: string },
+  errors: { id: string, content: string }
+}
 
-export default function FormWithHook() {
+export default function FormWithUseActionState() {
 
   const formRef = useRef<HTMLFormElement>(null)
   const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData) => {
@@ -20,7 +22,7 @@ export default function FormWithHook() {
     const responseObj = {
       success: true,
       prevState: newTodo as TodoType,
-      errors: {id: "", content: ""}
+      errors: { id: "", content: "" }
     }
 
     //client validation
@@ -40,16 +42,18 @@ export default function FormWithHook() {
       responseObj.errors = serverResult.errors
       return responseObj
     }
-    return {success: true,
-      prevState: {id: null, content: ""},
-      errors: {id: "", content: ""}}
+    return {
+      success: true,
+      prevState: { id: null, content: "" },
+      errors: { id: "", content: "" }
+    }
 
   }, null)
 
   return (
     <form ref={formRef} action={formAction} className='flex gap-4 flex-col p-4 border m-4'>
       {JSON.stringify(formState)}
-      <h2 className='text-2xl font-bold tracking-wide'>Formulario 2</h2>
+      <h2 className='text-2xl font-bold tracking-wide'>useActionState</h2>
 
       <input className="input input-primary" type="number" name="id" defaultValue={formState?.prevState?.id} />
       <p>{formState?.errors?.id && formState?.errors.id}</p>

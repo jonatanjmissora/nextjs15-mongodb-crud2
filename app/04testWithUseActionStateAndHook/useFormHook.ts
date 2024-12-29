@@ -3,32 +3,34 @@ import { todoSchema, TodoType } from "./todo.schema";
 import toast from "react-hot-toast";
 import { addTodo } from "./actions";
 
-type ResType = {
-  success: boolean,
-  prevState: { id: number, content: string },
-  errors: { id: string, content: string }
+export type ResType = {
+  success: boolean;
+  prevState?: Record<string, string>,
+  errors?: Record<string, string>
 }
 
 export const useLoginActionState = () => {
 
-  const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData) => {
+  const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData): Promise<ResType> => {
     const newTodo = Object.fromEntries(formData.entries())
 
     const responseObj = {
-      success: true,
+      success: false,
       prevState: newTodo as TodoType,
-      errors: { id: "", content: "" }
+      errors: { title: "", content: "" }
     }
 
     //client validation
-    const { success, data, error } = todoSchema.safeParse({ ...newTodo, id: Number(newTodo.id) })
+    const { success, data, error } = todoSchema.safeParse(newTodo)
     if (!success) {
-      const { id: idError, content: contentError } = error.flatten().fieldErrors
-      responseObj.errors = { id: idError ? idError[0] : "", content: contentError ? contentError[0] : "" }
+      const { title: titleError, content: contentError } = error.flatten().fieldErrors
+      responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
       toast.error("Error Cliente")
       return responseObj
     }
-    toast.success("Success Ciente")
+    
+    //tengo que separar en 2 hooks, y que una vez que confirme el cliente, vaya al server
+    alert("antes de llamar al server")
 
     const serverResult = await addTodo(data)
     //server validation
@@ -38,9 +40,7 @@ export const useLoginActionState = () => {
       return responseObj
     }
     return {
-      success: true,
-      prevState: { id: null, content: "" },
-      errors: { id: "", content: "" }
+      success: true
     }
 
   }, null)

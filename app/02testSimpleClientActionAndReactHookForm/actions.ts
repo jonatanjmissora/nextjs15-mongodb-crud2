@@ -1,5 +1,6 @@
 "use server"
 
+import "server-only";
 import { revalidatePath } from "next/cache"
 import { getErrorMessage } from "../../_lib/utils/getErrorMessage"
 import { todoSchema, TodoType } from "./todo.schema"

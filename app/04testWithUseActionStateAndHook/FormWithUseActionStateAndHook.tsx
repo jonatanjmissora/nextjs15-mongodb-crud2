@@ -1,67 +1,43 @@
 "use client"
 
-import { useActionState, useRef } from "react"
-import { todoSchema, TodoType } from "./todo.schema"
-import toast from "react-hot-toast"
-import { addTodo } from "./actions"
-
-
-
-type ResType = {
-  success: boolean,
-  prevState: { id: number, content: string },
-  errors: { id: string, content: string }
-}
+import { useRef } from "react"
+import { ResType, useLoginActionState } from "./useFormHook"
 
 export default function FormWithUseActionState() {
 
   const formRef = useRef<HTMLFormElement>(null)
-  const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData) => {
-    const newTodo = Object.fromEntries(formData.entries())
-
-    const responseObj = {
-      success: true,
-      prevState: newTodo as TodoType,
-      errors: { id: "", content: "" }
-    }
-
-    //client validation
-    const { success, data, error } = todoSchema.safeParse({ ...newTodo, id: Number(newTodo.id) })
-    if (!success) {
-      const { id: idError, content: contentError } = error.flatten().fieldErrors
-      responseObj.errors = { id: idError ? idError[0] : "", content: contentError ? contentError[0] : "" }
-      toast.error("Error Cliente")
-      return responseObj
-    }
-    toast.success("Success Ciente")
-
-    const serverResult = await addTodo(data)
-    //server validation
-    if (!serverResult?.success && serverResult?.errors) {
-      toast.error("Error Servidor")
-      responseObj.errors = serverResult.errors
-      return responseObj
-    }
-    return {
-      success: true,
-      prevState: { id: null, content: "" },
-      errors: { id: "", content: "" }
-    }
-
-  }, null)
+  const [formState, formAction, isPending] = useLoginActionState()
 
   return (
-    <form ref={formRef} action={formAction} className='flex gap-4 flex-col p-4 border m-4'>
-      {JSON.stringify(formState)}
+    <form ref={formRef} action={formAction} className='flex gap-4 flex-col p-4 m-4 w-1/4'>
+      <div className="text-xs text-gray-500">
+        <p>success: {formState?.success ? "true" : "false"}</p>
+        <p>prevState: {JSON.stringify(formState?.prevState)}</p>
+        <p>errors: {JSON.stringify(formState?.errors)}</p>
+      </div>
       <h2 className='text-2xl font-bold tracking-wide'>useActionState</h2>
 
-      <input className="input input-primary" type="number" name="id" defaultValue={formState?.prevState?.id} />
-      <p>{formState?.errors?.id && formState?.errors.id}</p>
+      <Input formState={formState} label='title' />
 
-      <input className="input input-primary" type="text" name="content" defaultValue={formState?.prevState?.content} />
-      <p>{formState?.errors?.content && formState?.errors.content}</p>
+      <Input formState={formState} label='content' />
 
       <button className='btn btn-primary' type="submit" disabled={isPending}>{isPending ? "..." : "Crear"}</button>
     </form>
   )
 }
+
+const Input = ({formState, label}: {formState: ResType, label: string}) => {
+  return (
+    <>
+      <input 
+        className="input input-primary text-center" 
+        type="text" 
+        name={label} 
+        defaultValue={formState?.prevState?.[label]}
+        placeholder={`... ${label} ...`}
+      />
+      <p>{formState?.errors?.[label] && formState?.errors?.[label]}</p>
+    </>
+  )
+}
+

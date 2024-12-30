@@ -10,25 +10,25 @@ export default function FormWithUseActionState() {
 
   return (
     <>
-    {
+      {
         show
 
           ? (
-              <Modal inputValues={inputValues} setShow={setShow}/>
-            )
-          : ( 
-              <form onSubmit={(e) => e.preventDefault()}  className='flex gap-4 flex-col p-4 m-4 w-1/4'>
-            
-                <h2 className='text-2xl font-bold tracking-wide'>useActionState</h2>
+            <Modal inputValues={inputValues} setShow={setShow} />
+          )
+          : (
+            <form onSubmit={(e) => e.preventDefault()} className='flex gap-4 flex-col p-4 m-4 w-1/4'>
 
-                <input className="input" type="text" name="title" placeholder="... title" onChange={(e) => setInputValues({...inputValues, [e.currentTarget.name]: e.currentTarget.value})}/>
+              <h2 className='text-2xl font-bold tracking-wide'>useActionState</h2>
 
-                <input className="input" type="text" name="content" placeholder="content" onChange={(e) => setInputValues({...inputValues, [e.currentTarget.name]: e.currentTarget.value})}/>
+              <input className="input" type="text" name="title" placeholder="... title" onChange={(e) => setInputValues({ ...inputValues, [e.currentTarget.name]: e.currentTarget.value })} />
 
-                <button className='btn btn-primary' onClick={() => setShow(true)} type="submit">Crear</button>
-                
-              </form>
-            )
+              <input className="input" type="text" name="content" placeholder="content" onChange={(e) => setInputValues({ ...inputValues, [e.currentTarget.name]: e.currentTarget.value })} />
+
+              <button className='btn btn-primary' onClick={() => setShow(true)} type="submit">Crear</button>
+
+            </form>
+          )
       }
     </>
   )

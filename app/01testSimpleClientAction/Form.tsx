@@ -4,28 +4,27 @@ import React, { useState } from 'react'
 import { todoSchema } from './todo.schema'
 import { addTodo } from './actions'
 import toast from 'react-hot-toast'
+import SubmitBtn from './SubmitBtn'
 
-const defaultErrors = { id: "", content: "" }
+const defaultErrors = { title: "", content: "" }
 
 export default function Form() {
 
-  const [inputFields, setInputFields] = useState<{ [key: string]: string }>({})
-  const [errors, setErrors] = useState<{ [key: string]: string }>(defaultErrors)
+  const [inputFields, setInputFields] = useState(defaultErrors)
+  const [errors, setErrors] = useState(defaultErrors)
 
   const clientAction = async (formData: FormData) => {
     setErrors(defaultErrors)
+    const title = formData.get("title") as string
     const content = formData.get("content") as string
-    setInputFields({ content })
-    const newTodo = {
-      id: 2,
-      content
-    }
+    setInputFields({ title, content })
+    const newTodo = { title, content }
 
     //client validation
     const { success, data, error } = todoSchema.safeParse(newTodo)
     if (!success) {
-      const { id: idError, content: contentError } = error.flatten().fieldErrors
-      if (idError) setErrors(prev => ({ ...prev, id: idError[0] }))
+      const { title: titleError, content: contentError } = error.flatten().fieldErrors
+      if (titleError) setErrors(prev => ({ ...prev, title: titleError[0] }))
       if (contentError) setErrors(prev => ({ ...prev, content: contentError[0] }))
       toast.error("Error en el cliente")
       return
@@ -33,7 +32,9 @@ export default function Form() {
 
     const serverResult = await addTodo(data)
     if (!serverResult?.success && serverResult?.errors) {
-      toast.error("Error en el servidor")
+      if (serverResult?.errors.title) setErrors(prev => ({ ...prev, title: serverResult?.errors.title }))
+      if (serverResult?.errors.content) setErrors(prev => ({ ...prev, content: serverResult?.errors.content }))
+      toast.error("Error en el server")
       return
     }
 
@@ -42,12 +43,35 @@ export default function Form() {
 
   return (
     <form action={clientAction} className='flex gap-4 flex-col p-4 border m-4'>
+
+      <code>action="{"clientAction"}"<br />
+        1 - invoco clientAction(formData)<br />
+        2 - verificacion del cliente, puedo usar toast<br />
+        3 - invoco server action addTodo(newTodo)<br />
+        4 - verificacion del servidor, accion en la DB<br />
+        5 - puedo usar la respuesta del servidor<br />
+        NO utlizo useActionState ni RHF, si utilizo useState<br />
+      </code>
+
       <h2 className='text-2xl font-bold tracking-wide'>Simple Client Action</h2>
-      <input className="hidden" name="id" defaultValue={2} />
-      <p>{errors?.id && errors.id}</p>
-      <input className="input input-primary" type="text" name="content" defaultValue={inputFields?.content} />
-      <p>{errors?.content && errors.content}</p>
-      <button className='btn btn-primary' type="submit">Crear</button>
+      <Input label="title" defaultValue={inputFields.title} error={errors.title} />
+      <Input label="content" defaultValue={inputFields.content} error={errors.content} />
+      <SubmitBtn />
     </form>
+  )
+}
+
+const Input = ({ label, defaultValue, error }: { label: string, defaultValue: string, error: string }) => {
+  return (
+    <>
+      <input
+        className="input input-primary text-center"
+        type="text"
+        name={label}
+        defaultValue={defaultValue}
+        placeholder={`... ${label} ...`}
+      />
+      <p>{error && error}</p>
+    </>
   )
 }

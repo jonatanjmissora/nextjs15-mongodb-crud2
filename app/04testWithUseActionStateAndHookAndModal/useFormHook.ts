@@ -21,15 +21,15 @@ export const useLoginActionState = () => {
     }
 
     //client validation
-    const { success, data, error } = todoSchema.safeParse(newTodo)
-    if (!success) {
-      const { title: titleError, content: contentError } = error.flatten().fieldErrors
-      responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
-      toast.error("Error Cliente")
-      return responseObj
-    }
-    
-    const serverResult = await addTodo(data)
+    // const { success, data, error } = todoSchema.safeParse(newTodo)
+    // if (!success) {
+    //   const { title: titleError, content: contentError } = error.flatten().fieldErrors
+    //   responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
+    //   toast.error("Error Cliente")
+    //   return responseObj
+    // }
+
+    const serverResult = await addTodo(newTodo as TodoType)
     //server validation
     if (!serverResult?.success && serverResult?.errors) {
       toast.error("Error Servidor")

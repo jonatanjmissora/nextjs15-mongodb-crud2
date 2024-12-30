@@ -11,9 +11,10 @@ export default async function Header() {
     <div className="navbar flex justify-between bg-slate-900 px-4">
       <Link href={"/"} className="btn btn-ghost text-xl">K@to</Link>
       <nav>
-        <Link href={"/01testSimpleClientAction"} className="btn btn-ghost">Simple Client Action</Link>
-        <Link href={"/02testSimpleClientActionAndReactHookForm"} className="btn btn-ghost">Simple Client Action + React Hook Form</Link>
+        <Link href={"/01testSimpleClientAction"} className="btn btn-ghost">Client Action + Server</Link>
+        <Link href={"/02testSimpleClientActionAndReactHookForm"} className="btn btn-ghost">Client Action + RHF</Link>
         <Link href={"/04testWithUseActionStateAndHook"} className="btn btn-ghost">Use Action State</Link>
+        <Link href={"/04testWithUseActionStateAndHookAndModal"} className="btn btn-ghost">Use Action State + Modal</Link>
       </nav>
       <div className="flex-none">
         {

@@ -5,8 +5,15 @@ import { revalidatePath } from "next/cache"
 import { todoSchema, TodoType } from "./todo.schema"
 import { getErrorMessage } from "../../_lib/utils/getErrorMessage"
 
-export const addTodo = async (newTodo: TodoType) => {
+export type ResType = {
+  success: boolean;
+  prevState?: Record<string, string>,
+  errors?: Record<string, string>
+}
+
+export const addTodo2 = async (prevState: ResType, formData: FormData) => {
   await new Promise(resolve => setTimeout(resolve, 1000))	// Simulate server latency
+  const newTodo = Object.fromEntries(formData.entries()) as TodoType
 
   //server validation
   let errors: { title: string, content: string }

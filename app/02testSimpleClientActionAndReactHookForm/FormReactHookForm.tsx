@@ -17,7 +17,7 @@ export default function Form() {
 
     handleSubmit(() => {
 
-      // const res = formRef.current?.submit()
+      const res = formRef.current?.submit()
 
       console.log(formState)
     }
@@ -35,11 +35,12 @@ export default function Form() {
 
         <code>useActionState + RHF<br />
           1 - utilizo HFR para la validacion cliente<br />
-          2 - se ejecuta con el <br />
-          3 - invoco server action addTodo(newTodo)<br />
-          4 - verificacion del servidor, accion en la DB<br />
-          5 - puedo usar la respuesta del servidor<br />
-          NO utlizo useActionState ni RHF, si utilizo useState<br />
+          2 - y el useActionState para el servidor <br />
+          3 - uso onSubmit, para ejecutar el handleSubmit del<br />
+          4 - HFR y de ahi, invoco un<br />
+          5 - href para que se ejecute un formRef.current?.submit()<br />
+          Utlizo useActionState + RHF, no me gusta que reinicie la pagina con <br />
+          problema: se pisan el onSubmit={} y el action={} en el mismo form
         </code>
 
         <h2 className='text-2xl font-bold tracking-wide'>useActionState + RHF</h2>

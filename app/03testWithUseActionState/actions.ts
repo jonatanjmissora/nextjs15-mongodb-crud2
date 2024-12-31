@@ -7,19 +7,19 @@ import { getErrorMessage } from "../../_lib/utils/getErrorMessage"
 export const addTodo = async (newTodo: TodoType) => {
 
   //server validation
-  let errors: { id: string, content: string }
+  let errors: { title: string, content: string }
   const { success, data, error } = todoSchema.safeParse(newTodo)
   if (!success) {
-    const { id: idError, content: contentError } = error.flatten().fieldErrors
-    errors = { id: idError ? idError[0] : "", content: contentError ? contentError[0] : "" }
+    const { title: titleError, content: contentError } = error.flatten().fieldErrors
+    errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
     return { success: false, errors }
   }
   try {
     //insertar en DB
     revalidatePath("/")
-    return { success: true, errors: { id: "", content: "" } }
+    return { success: true, errors: { title: "", content: "" } }
   } catch (error) {
-    return { success: false, errors: { id: "", content: getErrorMessage(error) } }
+    return { success: false, errors: { title: "", content: getErrorMessage(error) } }
   }
 
 }

@@ -1,20 +1,14 @@
 "use client"
 
-import { useRef } from "react"
 import { ResType, useLoginActionState } from "./useFormHook"
 
 export default function FormWithUseActionState() {
 
-  const formRef = useRef<HTMLFormElement>(null)
   const [formState, formAction, isPending] = useLoginActionState()
 
   return (
-    <form ref={formRef} action={formAction} className='flex gap-4 flex-col p-4 m-4 w-1/4'>
-      <div className="text-xs text-gray-500">
-        <p>success: {formState?.success ? "true" : "false"}</p>
-        <p>prevState: {JSON.stringify(formState?.prevState)}</p>
-        <p>errors: {JSON.stringify(formState?.errors)}</p>
-      </div>
+    <form action={formAction} className='flex gap-4 flex-col p-4 m-4 w-1/4'>
+      
       <h2 className='text-2xl font-bold tracking-wide'>useActionState</h2>
 
       <Input formState={formState} label='title' />
@@ -22,6 +16,9 @@ export default function FormWithUseActionState() {
       <Input formState={formState} label='content' />
 
       <button className='btn btn-primary' type="submit" disabled={isPending}>{isPending ? "..." : "Crear"}</button>
+
+      <p>{formState?.success && "Todo enviado exitosamente"}</p>
+      
     </form>
   )
 }

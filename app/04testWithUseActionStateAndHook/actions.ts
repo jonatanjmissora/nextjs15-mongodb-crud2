@@ -30,3 +30,4 @@ export const addTodo = async (newTodo: TodoType) => {
   }
 
 }
+

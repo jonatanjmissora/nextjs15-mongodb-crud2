@@ -9,8 +9,8 @@ import { addTodo } from "./actions"
 
 type ResType = {
   success: boolean,
-  prevState: { id: number, content: string },
-  errors: { id: string, content: string }
+  prevState: { title: string, content: string },
+  errors: { title: string, content: string }
 }
 
 export default function FormWithUseActionState() {
@@ -22,14 +22,14 @@ export default function FormWithUseActionState() {
     const responseObj = {
       success: true,
       prevState: newTodo as TodoType,
-      errors: { id: "", content: "" }
+      errors: { title: "", content: "" }
     }
 
     //client validation
     const { success, data, error } = todoSchema.safeParse({ ...newTodo, id: Number(newTodo.id) })
     if (!success) {
-      const { id: idError, content: contentError } = error.flatten().fieldErrors
-      responseObj.errors = { id: idError ? idError[0] : "", content: contentError ? contentError[0] : "" }
+      const { title: titleError, content: contentError } = error.flatten().fieldErrors
+      responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
       toast.error("Error Cliente")
       return responseObj
     }
@@ -44,8 +44,8 @@ export default function FormWithUseActionState() {
     }
     return {
       success: true,
-      prevState: { id: null, content: "" },
-      errors: { id: "", content: "" }
+      prevState: { title: "", content: "" },
+      errors: { title: "", content: "" }
     }
 
   }, null)
@@ -55,8 +55,8 @@ export default function FormWithUseActionState() {
       {JSON.stringify(formState)}
       <h2 className='text-2xl font-bold tracking-wide'>Formulario 2</h2>
 
-      <input className="input input-primary" type="number" name="id" defaultValue={formState?.prevState?.id} />
-      <p>{formState?.errors?.id && formState?.errors.id}</p>
+      <input className="input input-primary" type="text" name="title" defaultValue={formState?.prevState?.title} />
+      <p>{formState?.errors?.title && formState?.errors.title}</p>
 
       <input className="input input-primary" type="text" name="content" defaultValue={formState?.prevState?.content} />
       <p>{formState?.errors?.content && formState?.errors.content}</p>

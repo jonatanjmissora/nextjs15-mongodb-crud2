@@ -20,25 +20,15 @@ export const useLoginActionState = () => {
       errors: { title: "", content: "" }
     }
 
-    //client validation
-    const { success, data, error } = todoSchema.safeParse(newTodo)
-    if (!success) {
-      const { title: titleError, content: contentError } = error.flatten().fieldErrors
-      responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
-      toast.error("Error Cliente")
-      return responseObj
-    }
-    
-    //tengo que separar en 2 hooks, y que una vez que confirme el cliente, vaya al server
-    alert("antes de llamar al server")
-
-    const serverResult = await addTodo(data)
+    const serverResult = await addTodo(newTodo)
     //server validation
     if (!serverResult?.success && serverResult?.errors) {
       toast.error("Error Servidor")
       responseObj.errors = serverResult.errors
       return responseObj
     }
+
+    toast.success("Todo añadido")
     return {
       success: true
     }

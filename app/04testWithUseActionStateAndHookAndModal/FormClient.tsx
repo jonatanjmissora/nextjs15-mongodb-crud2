@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { todoSchema, TodoType } from "./todo.schema"
 import FormServer from "./FormServer"
+import { addTodo2 } from "./actions"
 
 export default function FormClient() {
 
@@ -18,8 +19,14 @@ export default function FormClient() {
     setShow(true)
    }
 
+   const [formState, formAction, isPending] = useActionState(addTodo2, null)
+
+  useEffect(() => {
+    setShow(false)
+  }, [formState?.success])
+
   if(show) return (
-    <FormServer inputValues={inputValues} setShow={setShow} />
+    <FormServer inputValues={inputValues} setShow={setShow} formState={formState} formAction={formAction} isPending={isPending} />
   )
 
   return (
@@ -32,6 +39,7 @@ export default function FormClient() {
         type="text" 
         name="title" 
         placeholder="... title" 
+        defaultValue={inputValues?.title}
         {...register("title")}
         />
       <p>{errors.title?.message}</p>
@@ -41,11 +49,15 @@ export default function FormClient() {
         type="text" 
         name="content" 
         placeholder="...content" 
+        defaultValue={inputValues?.content}
         {...register("content")}
         />
       <p>{errors.content?.message}</p>
 
       <button className='btn btn-primary' type="submit">Creamos</button>
+      <p>{JSON.stringify(inputValues)}</p>
+      <p>{formState?.success === true ? "TRUE" : "FALSE"}</p>
+      <p>{formState?.success === false && "ERROR"}</p>
 
     </form>
   )

@@ -1,15 +1,14 @@
 import toast from 'react-hot-toast'
 import { useLoginActionState } from './useFormHook'
 import { useActionState, useEffect } from 'react'
-import { addTodo2 } from './actions'
+import { addTodo2, ResType } from './actions'
 
-export default function FormServer({ inputValues, setShow }: { inputValues: { title: string, content: string }, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
-
-  const [formState, formAction, isPending] = useActionState(addTodo2, null)
-
-  useEffect(() => {
-    if(formState?.success) setShow(false)
-  }, [formState])
+export default function FormServer({ inputValues, setShow, formState, formAction, isPending }: 
+  { inputValues: { title: string, content: string}, 
+  setShow: React.Dispatch<React.SetStateAction<boolean>>,
+  formState: ResType, 
+  formAction: (payload: FormData) => void, 
+  isPending: boolean }) {
 
   return (
     <div className="modal-box">

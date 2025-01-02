@@ -5,8 +5,6 @@ import { todoSchema, TodoType } from "./todo.schema"
 import toast from "react-hot-toast"
 import { addTodo } from "./actions"
 
-
-
 type ResType = {
   success: boolean,
   prevState: { title: string, content: string },

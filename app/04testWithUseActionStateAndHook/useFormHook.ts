@@ -20,6 +20,15 @@ export const useLoginActionState = () => {
       errors: { title: "", content: "" }
     }
 
+    // client validation
+    const { success, data, error } = todoSchema.safeParse(newTodo)
+    if (!success) {
+      const { title: titleError, content: contentError } = error.flatten().fieldErrors
+      responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
+      toast.error("Error Cliente")
+      return responseObj
+    }
+
     const serverResult = await addTodo(newTodo)
     //server validation
     if (!serverResult?.success && serverResult?.errors) {

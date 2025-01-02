@@ -4,6 +4,7 @@ import "server-only";
 import { revalidatePath } from "next/cache"
 import { todoSchema, TodoType } from "./todo.schema"
 import { getErrorMessage } from "../../_lib/utils/getErrorMessage"
+import { redirect } from "next/navigation";
 
 export type ResType = {
   success: boolean;
@@ -11,9 +12,8 @@ export type ResType = {
   errors?: Record<string, string>
 }
 
-export const addTodo2 = async (prevState: ResType, formData: FormData) => {
+export const addTodo2 = async (newTodo: TodoType) => {
   await new Promise(resolve => setTimeout(resolve, 1000))	// Simulate server latency
-  const newTodo = Object.fromEntries(formData.entries()) as TodoType
 
   //server validation
   let errors: { title: string, content: string }

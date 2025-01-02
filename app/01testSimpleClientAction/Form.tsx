@@ -31,6 +31,7 @@ export default function Form() {
     }
 
     const serverResult = await addTodo(data)
+    // server validation
     if (!serverResult?.success && serverResult?.errors) {
       if (serverResult?.errors.title) setErrors(prev => ({ ...prev, title: serverResult?.errors.title }))
       if (serverResult?.errors.content) setErrors(prev => ({ ...prev, content: serverResult?.errors.content }))

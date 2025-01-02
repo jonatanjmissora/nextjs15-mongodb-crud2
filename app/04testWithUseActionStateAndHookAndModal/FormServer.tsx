@@ -1,7 +1,4 @@
-import toast from 'react-hot-toast'
-import { useLoginActionState } from './useFormHook'
-import { useActionState, useEffect } from 'react'
-import { addTodo2, ResType } from './actions'
+import { ResType } from './actions'
 
 export default function FormServer({ inputValues, setShow, formState, formAction, isPending }: 
   { inputValues: { title: string, content: string}, 
@@ -29,9 +26,6 @@ export default function FormServer({ inputValues, setShow, formState, formAction
 
         </form>
       </div>
-
-      <p>{JSON.stringify(formState)}</p>
-      <p>{isPending ? "TRUE" : "FALSE"}</p> 
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { addTodo2 } from './actions'
 import { useActionState, useRef } from 'react'
 import SubmitBtn from './SubmitBtn'
+import toast from 'react-hot-toast'
 
 export default function Form() {
 
@@ -17,9 +18,15 @@ export default function Form() {
 
     handleSubmit(() => {
 
-      const res = formRef.current?.submit()
-
-      console.log(formState)
+      formRef.current?.submit()
+      console.log("formState", formState)
+      if(formState?.success) {
+        formRef.current?.reset()
+        toast.success("Todo añadido")
+      }
+      else {
+        toast.error("Error Servidor")
+      }
     }
     )(evt)
   }
@@ -52,6 +59,7 @@ export default function Form() {
         <p>{formState?.errors?.content}</p>
         <SubmitBtn />
         {isPending && <p>Enviando...</p>}
+        {JSON.stringify(formState)}
       </form>
     </>
   )

@@ -30,16 +30,17 @@ export default function Form() {
       return
     }
 
-    const serverResult = await addTodo(data)
+    const { success: serverSuccess, errors: serverErrors } = await addTodo(data)
     // server validation
-    if (!serverResult?.success && serverResult?.errors) {
-      if (serverResult?.errors.title) setErrors(prev => ({ ...prev, title: serverResult?.errors.title }))
-      if (serverResult?.errors.content) setErrors(prev => ({ ...prev, content: serverResult?.errors.content }))
+    if (!serverSuccess && serverErrors) {
+      if (serverErrors.title) setErrors(prev => ({ ...prev, title: serverErrors.title }))
+      if (serverErrors.content) setErrors(prev => ({ ...prev, content: serverErrors.content }))
       toast.error("Error en el server")
       return
     }
 
     toast.success("Todo creado")
+    setInputFields(defaultErrors)
   }
 
   return (
@@ -66,13 +67,13 @@ const Input = ({ label, defaultValue, error }: { label: string, defaultValue: st
   return (
     <>
       <input
-        className="input input-primary text-center"
+        className={`input input-primary text-center text-slate-900 ${error && 'input-error'}`}
         type="text"
         name={label}
         defaultValue={defaultValue}
         placeholder={`... ${label} ...`}
       />
-      <p>{error && error}</p>
+      <p className='text-red-700'>{error && error}</p>
     </>
   )
 }

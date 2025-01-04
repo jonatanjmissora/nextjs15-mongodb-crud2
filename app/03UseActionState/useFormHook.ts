@@ -6,7 +6,8 @@ import { addTodo } from "./actions";
 export type ResType = {
   success: boolean;
   prevState?: Record<string, string>,
-  errors?: Record<string, string>
+  errors?: Record<string, string>,
+  server?: string,
 }
 
 export const useLoginActionState = () => {
@@ -17,7 +18,8 @@ export const useLoginActionState = () => {
     const responseObj = {
       success: false,
       prevState: newTodo as TodoType,
-      errors: { title: "", content: "" }
+      errors: { title: "", content: "" },
+      server: ""
     }
 
     // client validation
@@ -29,17 +31,17 @@ export const useLoginActionState = () => {
       return responseObj
     }
 
-    const serverResult = await addTodo(newTodo)
+    const { success: serverSuccess, message } = await addTodo(newTodo)
     //server validation
-    if (!serverResult?.success && serverResult?.errors) {
+    if (!serverSuccess) {
       toast.error("Error Servidor")
-      responseObj.errors = serverResult.errors
+      responseObj.server = message
       return responseObj
     }
 
     toast.success("Todo añadido")
     return {
-      success: true
+      success: true, server: message
     }
 
   }, null)

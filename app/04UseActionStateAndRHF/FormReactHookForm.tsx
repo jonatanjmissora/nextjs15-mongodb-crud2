@@ -1,7 +1,7 @@
 "use client"
 
 import { todoSchema, TodoType } from './todo.schema'
-import { useForm } from 'react-hook-form'
+import { useForm, UseFormRegister } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addTodo2 } from './actions'
 import { useActionState, useRef } from 'react'
@@ -19,8 +19,8 @@ export default function Form() {
     handleSubmit(() => {
 
       formRef.current?.submit()
-      console.log("formState", formState)
-      if(formState?.success) {
+      console.log(formState)
+      if (formState?.success) {
         formRef.current?.reset()
         toast.success("Todo añadido")
       }
@@ -47,33 +47,39 @@ export default function Form() {
           4 - HFR y de ahi, invoco un<br />
           5 - href para que se ejecute un formRef.current?.submit()<br />
           Utlizo useActionState + RHF, no me gusta que reinicie la pagina con <br />
-          problema: se pisan el onSubmit={} y el action={} en el mismo form
+          problema: se pisan el onSubmit={ } y el action={ } en el mismo form
+          el toast me toma el estado anterior
         </code>
 
         <h2 className='text-2xl font-bold tracking-wide'>useActionState + RHF</h2>
-        <input className="input input-primary" type="text" name="title" {...register("title")} defaultValue={formState?.prevState?.title} />
-        <p>{errors?.title?.message}</p>
-        <p>{formState?.errors?.title}</p>
-        <input className="input input-primary" type="text" name="content" {...register("content")} defaultValue={formState?.prevState?.content} />
-        <p>{errors?.content?.message}</p>
-        <p>{formState?.errors?.content}</p>
+        <Input label="title" defaultValue={formState?.prevState?.title} error={errors.title?.message} register={register} />
+        <Input label="content" defaultValue={formState?.prevState?.content} error={errors.content?.message} register={register} />
+
         <SubmitBtn />
-        {isPending && <p>Enviando...</p>}
-        {JSON.stringify(formState)}
+        {formState?.success && <p className='text-green-700'>Todo enviado exitosamente</p>}
+        {formState?.errors?.title && <p className='text-red-700'>{formState?.errors.title}</p>}
+        {formState?.errors?.content && <p className='text-red-700'>{formState?.errors.content}</p>}
+        <p>{JSON.stringify(formState)}</p>
       </form>
     </>
   )
 }
 
-const Input = ({ label, defaultValue, error }: { label: string, defaultValue: string, error: string }) => {
+const Input = ({ label, defaultValue, error, register }:
+  {
+    label: string, defaultValue: string, error: string,
+    register: UseFormRegister<{ [key: string]: string }>
+  }) => {
+
   return (
     <>
       <input
-        className="input input-primary text-center"
+        className={`input input-primary text-center text-slate-900 ${error && 'input-error'}`}
         type="text"
         name={label}
         defaultValue={defaultValue}
         placeholder={`... ${label} ...`}
+        {...register(`${label}`)}
       />
       <p>{error && error}</p>
     </>

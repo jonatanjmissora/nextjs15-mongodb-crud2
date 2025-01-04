@@ -1,10 +1,19 @@
 "use server"
 
+import "server-only";
 import { revalidatePath } from "next/cache"
 import { todoSchema, TodoType } from "./todo.schema"
 import { getErrorMessage } from "../../_lib/utils/getErrorMessage"
+import { redirect } from "next/navigation";
 
-export const addTodo = async (newTodo: TodoType) => {
+export type ResType = {
+  success: boolean;
+  prevState?: Record<string, string>,
+  errors?: Record<string, string>
+}
+
+export const addTodo2 = async (newTodo: TodoType) => {
+  await new Promise(resolve => setTimeout(resolve, 1000))	// Simulate server latency
 
   //server validation
   let errors: { title: string, content: string }
@@ -14,10 +23,15 @@ export const addTodo = async (newTodo: TodoType) => {
     errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
     return { success: false, errors }
   }
+
+  if(newTodo.title === "error") {
+    return { success: false, errors: { title: "", content: "No se puede tener error en el titulo" } }
+  }
+
   try {
     //insertar en DB
     revalidatePath("/")
-    return { success: true, errors: { title: "", content: "" } }
+    return { success: true }
   } catch (error) {
     return { success: false, errors: { title: "", content: getErrorMessage(error) } }
   }

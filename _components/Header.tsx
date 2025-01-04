@@ -5,18 +5,20 @@ import getUserFromCookie from '../_lib/utils/getUser'
 import HeaderLink from './HeaderLink'
 
 const NavLinks = [
-  { href: "/01testSimpleClientAction", text: "Client Action + Server" },
-  { href: "/02testSimpleClientActionAndReactHookForm", text: "Client Action + RHF" },
-  { href: "/04testWithUseActionStateAndHook", text: "Use Action State" },
-  { href: "/04testWithUseActionStateAndHookAndModal", text: "Use Action State + Modal" },
+  { href: "/01ClientAndServerAction", text: "Client Action + Server Action" },
+  { href: "/02RHFAndServerAction", text: "HFR + Server Action" },
+  { href: "/03UseActionState", text: "useActionState" },
+  { href: "/04UseActionStateAndRHF", text: "useActionState + RHF" },
+  { href: "/05UseActionStateAndModal", text: "useActionState + Modal" },
+  { href: "/06UseActionStateAndRHFAndModal", text: "useActionState + RHF + Modal" },
 ]
 
 export default async function Header() {
 
   const user = await getUserFromCookie()
-  
+
   return (
-    <div className="navbar flex justify-between bg-slate-900 px-4">
+    <div className="navbar flex justify-between text-slate-200 bg-slate-900 px-4">
       <Link href={"/"} className="btn btn-ghost text-xl">K@to</Link>
       <nav>
         {

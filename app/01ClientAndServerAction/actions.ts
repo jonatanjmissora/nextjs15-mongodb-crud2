@@ -15,7 +15,9 @@ export const addTodo = async (newTodo: TodoType) => {
     errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
     return { success: false, errors }
   }
+
   if (newTodo.title === "error") return { success: false, errors: { title: "No puede contener error", content: "" } }
+
   try {
     //insertar en DB
     revalidatePath("/")

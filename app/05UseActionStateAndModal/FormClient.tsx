@@ -1,97 +1,73 @@
 "use client"
 
-import { useActionState, useEffect, useRef, useState } from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { todoSchema, TodoType } from "./todo.schema"
-import FormServer from "./FormServer"
-import { addTodo2, ResType } from "./actions"
-import toast from "react-hot-toast"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useLoginActionState } from "./useFormHook"
 
 export default function FormClient() {
 
-  const [inputValues, setInputValues] = useState({ title: "", content: "" })
-  const [show, setShow] = useState(false)
-  const formRef = useRef<HTMLFormElement>(null)
-  const router = useRouter()
+  const [inputValues, setInputValues] = useState({title: "", content: ""})
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [formState, formAction, isPending] = useLoginActionState(setShowConfirm)
 
-   const { register, formState: { errors }, handleSubmit } = useForm<TodoType>({ resolver: zodResolver(todoSchema) })
-   const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData): Promise<ResType> => {
-    const newTodo = Object.fromEntries(formData.entries())
-
-    const responseObj = {
-      success: false,
-      prevState: newTodo as TodoType,
-      errors: { title: "", content: "" }
-    }
-
-    const serverResult = await addTodo2(newTodo)
-    setShow(false)
-    //server validation
-    if (!serverResult?.success && serverResult?.errors) {
-      toast.error("Error Servidor")
-      responseObj.errors = serverResult.errors
-      return responseObj
-    }
-
-    toast.success("Todo añadido")
-    setInputValues({ title: "", content: "" })
-    router.push("/")
-    // por que no me lo toma????
-
-    return { success: true }
-
-  }, null)
+  //hacer aca el RHF
   
-   const onSubmit:SubmitHandler<TodoType>  = (data) => {
-    setInputValues({ title: data?.title, content: data?.content })
-    formRef.current?.reset()
-    setShow(true)
-   }
-
-   useEffect(() => {
-    console.log("inputValues", inputValues)
-  }, [inputValues])
-
-  if(show) return (
-    <FormServer inputValues={inputValues} setShow={setShow} formState={formState} formAction={formAction} isPending={isPending} />
-  )
-
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const title = form.title.value as string
+    const content = form.content.value as string
+    setShowConfirm(prev => !prev)
+    setInputValues({title, content})
+  }
+  
   return (
-    <form ref={formRef} onSubmit={(handleSubmit(onSubmit))} className='flex gap-4 flex-col p-4 m-4 w-1/4'>
+    <>
+      {
+        showConfirm 
+        ? (
+          <form action={formAction} className='flex gap-4 flex-col p-4 m-4 w-1/4'>
+            <p>{JSON.stringify(inputValues)}</p>
+            <Input label='title' value={inputValues.title} error={formState?.errors?.title} />
+            <Input label='content' value={inputValues.content} error={formState?.errors?.content} />
 
-      <h2 className='text-2xl font-bold tracking-wide'>useActionState + Modal</h2>
+            <button type="submit" className="btn btn-primary" disabled={isPending}>Crear</button>
+            <button type="button" className="btn btn-error" onClick={() => setShowConfirm(prev => !prev)}>Cancelar</button>
 
-      <input 
-        className="input" 
-        type="text" 
-        name="title" 
-        placeholder="... title" 
-        defaultValue={inputValues?.title}
-        {...register("title")}
-        />
-      <p>{errors.title?.message}</p>
+          </form>
+        )
+        : (
+          <form onSubmit={onSubmit}  className='flex gap-4 flex-col p-4 m-4 w-1/4'>
+      
+            <h2 className='text-2xl font-bold tracking-wide'>useActionState 👍</h2>
+      
+            <Input label='title' value={formState?.prevState?.title} error={formState?.errors?.title} />
+      
+            <Input label='content' value={formState?.prevState?.content} error={formState?.errors?.content} />
+      
+            <button type="submit" className="btn btn-primary" >Crear</button>
 
-      <input 
-        className="input" 
-        type="text" 
-        name="content" 
-        placeholder="...content" 
-        defaultValue={inputValues?.content}
-        {...register("content")}
-        />
-      <p>{errors.content?.message}</p>
-
-      <button className='btn btn-primary' type="submit">Creamos</button>
-      <p className="text-red-500">{formState?.success === false && "ERROR al guardar todo"}</p>
-      <p>{JSON.stringify(inputValues)}</p>
-
-    </form>
+            {<p className={`${formState?.success ? "text-green-700" : "text-red-700"}`}>{formState?.server && formState?.server}</p>}
+          </form>
+        )
+      }
+    </>
   )
 }
 
-// resetear inputValues cuando todo esta bien
-// dar un aviso con toast
+const Input = ({ label, value, error }: { label: string, value: string, error: string }) => {
+  return (
+    <>
+      <input
+        className={`input input-primary text-slate-600 text-center ${error && 'input-error'}`}
+        type="text"
+        name={label}
+        defaultValue={value}
+        placeholder={`... ${label} ...`}
+      />
+      <p>{error && error}</p>
+    </>
+  )
+}
 
-// no resetear inputValues si hay error
+//ahora si puedo probar de verificar con RHF
+//hacer los componentes de cada Formulario

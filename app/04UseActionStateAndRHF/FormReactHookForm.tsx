@@ -3,10 +3,10 @@
 import { todoSchema, TodoType } from './todo.schema'
 import { useForm, UseFormRegister } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addTodo2 } from './actions'
 import { useActionState, useRef } from 'react'
 import SubmitBtn from './SubmitBtn'
 import toast from 'react-hot-toast'
+import { addTodo2 } from './actions'
 
 export default function Form() {
 
@@ -17,7 +17,6 @@ export default function Form() {
     evt.preventDefault()
 
     handleSubmit(() => {
-
       formRef.current?.submit()
       console.log(formState)
       if (formState?.success) {
@@ -74,7 +73,7 @@ const Input = ({ label, defaultValue, error, register }:
   return (
     <>
       <input
-        className={`input input-primary text-center text-slate-900 ${error && 'input-error'}`}
+        className={`input input-primary text-center text-slate-200 ${error && 'input-error'}`}
         type="text"
         name={label}
         defaultValue={defaultValue}

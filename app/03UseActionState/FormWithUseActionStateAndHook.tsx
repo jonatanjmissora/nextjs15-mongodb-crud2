@@ -31,7 +31,7 @@ const Input = ({ label, value, error }: { label: string, value: string, error: s
   return (
     <>
       <input
-        className={`input input-primary text-center ${error && 'input-error'}`}
+        className={`input input-primary text-slate-600 text-center ${error && 'input-error'}`}
         type="text"
         name={label}
         defaultValue={value}

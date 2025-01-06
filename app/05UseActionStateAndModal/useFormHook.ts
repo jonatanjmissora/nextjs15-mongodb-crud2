@@ -2,6 +2,7 @@ import { useActionState } from "react";
 import { todoSchema, TodoType } from "./todo.schema";
 import toast from "react-hot-toast";
 import { addTodo } from "./actions";
+import { UseFormReset } from "react-hook-form";
 
 export type ResType = {
   success: boolean;
@@ -10,7 +11,10 @@ export type ResType = {
   server?: string,
 }
 
-export const useLoginActionState = (setShowConfirm) => {
+export const useLoginActionState = (setShowConfirm: React.Dispatch<React.SetStateAction<boolean>>, reset: UseFormReset<{
+  title?: string;
+  content?: string;
+}>) => {
 
   const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData): Promise<ResType> => {
     const newTodo = Object.fromEntries(formData.entries())
@@ -22,15 +26,6 @@ export const useLoginActionState = (setShowConfirm) => {
       server: ""
     }
     
-    // client validation
-    const { success, data, error } = todoSchema.safeParse(newTodo)
-    if (!success) {
-      const { title: titleError, content: contentError } = error.flatten().fieldErrors
-      responseObj.errors = { title: titleError ? titleError[0] : "", content: contentError ? contentError[0] : "" }
-      toast.error("Error Cliente")
-      return responseObj
-    }
-
     const { success: serverSuccess, message } = await addTodo(newTodo)
     //server validation
     if (!serverSuccess) {
@@ -42,6 +37,7 @@ export const useLoginActionState = (setShowConfirm) => {
 
     toast.success("Todo añadido")
     setShowConfirm(false)
+    reset()
     return {
       success: true, server: message
     }

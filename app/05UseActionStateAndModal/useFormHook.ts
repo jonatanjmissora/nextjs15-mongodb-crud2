@@ -10,7 +10,7 @@ export type ResType = {
   message?: string,
 }
 
-export const useTodoActionState = (setShowConfirm: React.Dispatch<React.SetStateAction<boolean>>, reset: UseFormReset<{
+export const useTodoActionState = (setInputValues: React.Dispatch<React.SetStateAction<{title?: string, content?: string}>>, setShowConfirm: React.Dispatch<React.SetStateAction<boolean>>, reset: UseFormReset<{
   title?: string;
   content?: string;
 }>) => {
@@ -35,6 +35,7 @@ export const useTodoActionState = (setShowConfirm: React.Dispatch<React.SetState
 
     toast.success("Todo añadido")
     setShowConfirm(false)
+    setInputValues({title: "", content: ""})
     reset()
     return {
       success: true, prevState: { title: "", content: "" }, message

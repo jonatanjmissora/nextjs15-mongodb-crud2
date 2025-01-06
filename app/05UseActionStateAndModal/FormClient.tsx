@@ -12,7 +12,7 @@ export default function FormClient() {
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
   const { register, reset, formState: { errors }, handleSubmit } = useForm<TodoType>({ resolver: zodResolver(todoSchema) })
-  const [formState, formAction, isPending] = useTodoActionState(setShowConfirm, reset)
+  const [formState, formAction, isPending] = useTodoActionState(setInputValues, setShowConfirm, reset)
 
   const onSubmit: SubmitHandler<TodoType> = (data) => {
     const title = data?.title || ""
@@ -20,11 +20,6 @@ export default function FormClient() {
     setShowConfirm(prev => !prev)
     setInputValues({ title, content })
   }
-
-  useEffect(() => {
-    if (formState?.success) alert("true")
-    else alert("false")
-  }, [formState?.success])
 
   return (
     <>
@@ -52,8 +47,8 @@ export default function FormClient() {
 
               <h2 className='text-2xl font-bold tracking-wide'>useActionState + RHF + Confirm 👍</h2>
 
-              <Input label='title' value={formState?.prevState?.title} error={errors?.title?.message} register={register} />
-              <Input label='content' value={formState?.prevState?.content} error={errors?.content?.message} register={register} />
+              <Input label='title' value={inputValues.title} error={errors?.title?.message} register={register} />
+              <Input label='content' value={inputValues.content} error={errors?.content?.message} register={register} />
 
               <button type="submit" className="btn btn-primary" >Crear</button>
 
@@ -63,8 +58,6 @@ export default function FormClient() {
                   : <div className="text-green-500">{formState?.message}</div>
               }
 
-              <p>formState: {JSON.stringify(formState.prevState)}</p>
-              <p>inputValues: {JSON.stringify(inputValues)}</p>
             </form>
           )
       }

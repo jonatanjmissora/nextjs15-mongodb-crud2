@@ -10,7 +10,7 @@ const NavLinks = [
   { href: "/03UseActionState", text: "useActionState" },
   { href: "/04UseActionStateAndRHF", text: "useActionState + RHF" },
   { href: "/05UseActionStateAndModal", text: "useActionState + Modal" },
-  { href: "/06UseActionStateAndRHFAndModal", text: "useActionState + RHF + Modal" },
+  { href: "/06UseActionStateAndRHFVideo", text: "useActionState + RHF Video" },
 ]
 
 export default async function Header() {

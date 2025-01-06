@@ -7,39 +7,37 @@ import { UseFormReset } from "react-hook-form";
 export type ResType = {
   success: boolean;
   prevState?: Record<string, string>,
-  errors?: Record<string, string>,
-  server?: string,
+  message?: string,
 }
 
-export const useLoginActionState = (setShowConfirm: React.Dispatch<React.SetStateAction<boolean>>, reset: UseFormReset<{
+export const useTodoActionState = (setShowConfirm: React.Dispatch<React.SetStateAction<boolean>>, reset: UseFormReset<{
   title?: string;
   content?: string;
 }>) => {
 
   const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData): Promise<ResType> => {
-    const newTodo = Object.fromEntries(formData.entries())
+    const newTodo = Object.fromEntries(formData.entries()) as TodoType
 
     const responseObj = {
       success: false,
       prevState: newTodo as TodoType,
-      errors: { title: "", content: "" },
-      server: ""
+      message: ""
     }
-    
+
     const { success: serverSuccess, message } = await addTodo(newTodo)
     //server validation
     if (!serverSuccess) {
       toast.error("Error Servidor")
-      responseObj.server = message
+      responseObj.message = message
       setShowConfirm(false)
-      return responseObj
+      return { success: false, prevState: newTodo, message }
     }
 
     toast.success("Todo añadido")
     setShowConfirm(false)
     reset()
     return {
-      success: true, server: message
+      success: true, prevState: { title: "", content: "" }, message
     }
 
   }, null)

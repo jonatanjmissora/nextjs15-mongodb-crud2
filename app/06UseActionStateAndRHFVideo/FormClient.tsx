@@ -1,52 +1,42 @@
 "use client"
 
-import { RegisterOptions, useForm, UseFormRegister, UseFormRegisterReturn, useFormState } from "react-hook-form"
-import { loginSchema, LoginType } from "./login.schema"
+import { useForm, UseFormRegister } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useActionState, useRef } from "react"
-import { onSubmitAction } from "./actions"
-import { z } from "zod"
+import { startTransition, useActionState, useRef } from "react"
+import { todoSchema, TodoType } from "./todo.schema"
+import { useTodoActionState } from "./useFormHook"
 
 export default function FormClient() {
 
-  // const [inputValues, setInputValues] = useState({ title: "", content: "" })
-  // const [show, setShow] = useState(false)
-  // const formRef = useRef<HTMLFormElement>(null)
-  // const router = useRouter()
-
-  const [state, formAction] = useActionState(onSubmitAction, {
-    message: "",
-  });
-  const form = useForm<z.output<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      first: "",
-      last: "",
-      email: "",
-      ...(state?.fields ?? {}),
-    },
-  });
-
   const formRef = useRef<HTMLFormElement>(null);
+  const { register, reset, formState: { errors }, handleSubmit } = useForm<TodoType>({ resolver: zodResolver(todoSchema) })
+  const [formState, formAction, isPending] = useTodoActionState(reset);
+  const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault()
+    handleSubmit(() => {
+      startTransition(() => formAction(new FormData(formRef.current!)))
+    })(evt);
+  }
 
   return (
     <form
       ref={formRef}
-      className="space-y-8"
+      className="flex gap-4 flex-col p-4 m-4 w-1/4"
       action={formAction}
-      onSubmit={(evt) => {
-        evt.preventDefault();
-        form.handleSubmit(() => {
-          formAction(new FormData(formRef.current!));
-        })(evt);
-      }}
+      onSubmit={onSubmit}
     >
+      <h2 className='text-2xl font-bold tracking-wide'>useActionState + RHF 👍</h2>
 
-      <Input label={"first"} value={""} error={form.formState?.errors?.first?.message} register={form.register} />
-      <Input label={"last"} value={""} error={form.formState?.errors?.last?.message} register={form.register} />
-      <Input label={"email"} value={""} error={form.formState?.errors?.email?.message} register={form.register} />
+      <Input label={"title"} value={""} error={errors?.title?.message} register={register} />
+      <Input label={"content"} value={""} error={errors?.content?.message} register={register} />
 
-      <button className="btn btn-info" type="submit">Submit</button>
+      <button className="btn btn-info" disabled={isPending} type="submit">Submit</button>
+
+      {
+        !formState?.success
+          ? <div className="text-red-500">{formState?.message}</div>
+          : <div className="text-green-500">{formState?.message}</div>
+      }
 
     </form>
   )

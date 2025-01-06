@@ -1,38 +1,32 @@
 "use server";
 
-import { loginSchema } from "./login.schema";
+import { todoSchema, TodoType } from "./todo.schema";
 
 export type FormState = {
+  success: boolean;
+  prevState: {title?: string, content?: string};
   message: string;
-  fields?: Record<string, string>;
-  issues?: string[];
 };
 
-export async function onSubmitAction(
-  prevState: FormState,
-  data: FormData
-): Promise<FormState> {
-  const formData = Object.fromEntries(data);
-  const parsed = loginSchema.safeParse(formData);
+export const addTodo = async (
+  newTodo: TodoType
+): Promise<FormState> => {
 
-  if (!parsed.success) {
-    const fields: Record<string, string> = {};
-    for (const key of Object.keys(formData)) {
-      fields[key] = formData[key].toString();
-    }
-    return {
-      message: "Invalid form data",
-      fields,
-      issues: parsed.error.issues.map((issue) => issue.message),
-    };
+  await new Promise(resolve => setTimeout(resolve, 1000))	// Simulate server latency
+
+  //server validation
+  const { success: serverSuccess } = todoSchema.safeParse(newTodo)
+  if (!serverSuccess) {
+    return { success: false, prevState: newTodo, message: "Server Validation Fail" }
   }
 
-  if (parsed.data.email.includes("a")) {
-    return {
-      message: "Invalid email",
-      fields: parsed.data,
-    };
+  if (newTodo.title === "error") return { success: false, prevState: newTodo, message: "No puede contener error" }
+
+  try {
+    //insertar en DB
+    return { success: true, prevState: newTodo, message: "Todo creado satisfactoriamente" }
+  } catch (error) {
+    return { success: false, prevState: newTodo, message: "Server Error" }
   }
 
-  return { message: "User registered" };
 }

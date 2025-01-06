@@ -37,7 +37,7 @@ export default function FormWithUseActionState() {
         NO utlizo useActionState<br />
       </code>
 
-      <h2 className='text-2xl font-bold tracking-wide'>RHF + Server Action 👍</h2>
+      <h2 className='text-2xl font-bold tracking-wide'>Server Action + RHF 👍</h2>
 
       <Input label={"title"} register={register} error={errors?.title?.message} />
       <Input label={"content"} register={register} error={errors?.content?.message} />

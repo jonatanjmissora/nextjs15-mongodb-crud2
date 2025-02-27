@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="text-slate-200 h-dvh w-full flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700">
+      <body className="text-slate-200 h-max sm:h-dvh w-full flex flex-col">
         <Header />
         <main className="flex-1">
 

@@ -8,7 +8,7 @@ export default async function page({ searchParams }: { searchParams: Promise<{ [
   const user = await getUserFromCookie()
 
   return (
-    <div className="h-full flex flex-col items-center">
+    <div className="flex-1 flex justify-center items-center mx-auto w-full sm:w-3/4 p-4">
       {
         user
           ? <NotesList user={user} page={page} />

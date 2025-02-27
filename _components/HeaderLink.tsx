@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 
 export default function HeaderLink({ href, text }: { href: string, text: string }) {
 
-    const pathname = usePathname()
+  const pathname = usePathname()
 
   return (
-    <Link href={href} className={`btn btn-ghost ${pathname === href && "border-b border-white"}`}>{text}</Link>
+    <Link href={href} className={`btn btn-ghost border-0 ${pathname === href && "border-b border-white"}`}>{text}</Link>
   )
 }

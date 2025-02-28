@@ -2,39 +2,61 @@
 
 import { getCollection } from "../_lib/mongoConnect";
 import { ObjectId } from "mongodb";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { noteSchema, NoteType } from "../_lib/schema/schema.note";
 import { getErrorMessage } from "../_lib/utils/getErrorMessage";
+import getUserFromCookie from "../_lib/utils/getUser";
+import { TokenType, UserType } from "../_lib/types/user.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const insertNote = async (newNote: NoteType) => {
+export const getCachedUserNotes = unstable_cache(async (userId: ObjectId) => {
+
+  const notesCollection = await getCollection("notes")
+  return await notesCollection.find({ author: userId }).toArray()
+},
+  ["notes"],
+  {
+    tags: ['notes'],
+    revalidate: 3600,
+  }
+)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const insertNote = async (userId: string, newNote: NoteType) => {
+
+  const user = await getUserFromCookie() as TokenType
+  if (!user || user._id !== userId) return []
+
   const notesCollection = await getCollection("notes")
   return await notesCollection.insertOne(newNote)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const createNote = async (newNote: NoteType) => {
+export const createNote = async (userId: string, newNote: NoteType) => {
 
-  console.log({ newNote })
   const failObject = {
     success: false,
-    prevState: { title: newNote?.title || "", content: newNote?.content || "" },
+    prevState: { title: newNote?.title, content: newNote?.content },
     errors: { title: "", content: "" }
   }
 
+  const user = await getUserFromCookie() as TokenType
+  if (!user || user._id !== userId) return failObject
+
+  // data validation
   const { success, data, error } = noteSchema.safeParse(newNote)
   if (!success) {
     const { title: titleError, content: contentError } = error.flatten().fieldErrors
-    failObject.errors = { 
-      title: titleError ? titleError[0] : "", 
-      content: contentError ? contentError[0] : "" 
+    failObject.errors = {
+      title: titleError ? titleError[0] : "",
+      content: contentError ? contentError[0] : ""
     }
     return failObject
   }
 
   try {
-    //insertar en DB
-    const res = await insertNote(data)
+    // db validation
+    const res = await insertNote(userId, data)
     if (!res.insertedId.toString()) {
       failObject.errors.content = "Error en el servidor"
       return failObject
@@ -56,7 +78,7 @@ export const createNote = async (newNote: NoteType) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const editNote = async (id: string, newNote: NoteType) => {
+export const editNote = async (userId: string, id: string, newNote: NoteType) => {
 
   const failObject = {
     success: false,
@@ -64,20 +86,25 @@ export const editNote = async (id: string, newNote: NoteType) => {
     errors: { title: "", content: "" }
   }
 
+  const user = await getUserFromCookie() as TokenType
+  console.log("ACA LLEGO", user._id, " - -", userId)
+  if (!user || user._id !== userId) return failObject
+
+  //  data validation
   const { success, data, error } = noteSchema.safeParse(newNote)
   if (!success) {
     const { title: titleError, content: contentError } = error.flatten().fieldErrors
-    failObject.errors = { 
-      title: titleError ? titleError[0] : "", 
-      content: contentError ? contentError[0] : "" 
+    failObject.errors = {
+      title: titleError ? titleError[0] : "",
+      content: contentError ? contentError[0] : ""
     }
     return failObject
   }
 
   try {
     const { title, content } = data
-    console.log({ data })
     const notesCollection = await getCollection("notes")
+    // db validation
     const res = await notesCollection.updateOne(
       { _id: new ObjectId(id) },
       {
@@ -104,8 +131,10 @@ export const editNote = async (id: string, newNote: NoteType) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const deleteNote = async (prevState: { error: string }, formData: FormData) => {
-  const noteId = formData.get("noteid").toString()
+export const deleteNote = async (userId: string, noteId: string) => {
+
+  const user = await getUserFromCookie() as TokenType
+  if (!user || user._id !== userId) return { error: "No hay usuario logueado" }
 
   const notesCollection = await getCollection("notes")
   const res = await notesCollection.deleteOne({ "_id": new ObjectId(noteId) })

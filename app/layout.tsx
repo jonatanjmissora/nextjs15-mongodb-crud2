@@ -15,9 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="text-slate-200 h-max sm:h-dvh w-full flex flex-col">
+      <body className="text-slate-200 min-h-dvh sm:h-dvh w-full flex flex-col">
         <Header />
-        <main className="flex-1">
+        <main className="flex-1 overflow-y-hidden flex flex-col">
 
           {children}
           <Toaster

@@ -1,12 +1,15 @@
 import NoteForm from '../../../_components/Forms/NoteForm'
+import { TokenType } from '../../../_lib/types/user.types'
+import getUserFromCookie from '../../../_lib/utils/getUser'
 
-export default async function NewNotePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+export default async function NewNotePage() {
 
-  const userId = (await searchParams).userid || ""
+  const user = await getUserFromCookie() as TokenType
+  if (!user) return
 
   return (
-    <div className="h-full flex flex-col items-center justify-center">
-      <NoteForm userId={userId} />
+    <div className="flex-1 flex justify-center items-center mx-auto w-[95%] h-full sm:w-3/4">
+      <NoteForm userId={user._id.toString()} />
     </div>
   )
 }

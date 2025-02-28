@@ -10,23 +10,17 @@
 
 :root {
     --card-height: 30vh;
-    --card-width: calc(var(--card-height) * 1.5);
 }
 
-@media (max-width: 1024px) {
-    :root {
-        --card-height: 20vh;
-        --card-width: 100%;
-    }
-    .card3 {
-        background: red;
+@media (min-width: 720px) {
+    .card {
+        --card-height: 25vh;
     }
 }
 
-@media (max-width: 720px) {
-    :root {
-        --card-height: 30vh;
-        --card-width: 100%;
+@media (min-width: 1400px) {
+    .card {
+        --card-height: 25vh;
     }
 }
 
@@ -58,7 +52,6 @@ input {
     transition: background 0.5s, transform 0.5s;
     border-radius: 0.75rem;
     height: var(--card-height);
-    width: var(--card-width);
 }
 
 .card:hover {
@@ -75,10 +68,10 @@ input {
 .card:hover::before {
     content: "";
     position: absolute;
-    width: 101.5%;
-    height: 102%;
-    top: -1%;
-    left: -0.75%;
+    width: 100.5%;
+    height: 101%;
+    top: -0.5%;
+    left: -0.25%;
     border-radius: 0.75rem;
     background: linear-gradient(var(--rotate), orange, #4a00ff);
     animation: spin 2s ease-in-out infinite;
@@ -98,7 +91,7 @@ input {
 
 .card>div {
     position: absolute;
-    inset: 4px;
+    inset: 2px;
     z-index: 1;
     display: flex;
     flex-direction: column;

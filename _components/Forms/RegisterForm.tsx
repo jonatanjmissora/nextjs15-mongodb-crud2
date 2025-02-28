@@ -12,42 +12,44 @@ export default function RegisterForm() {
   const [formState, formAction, isPending] = useActionState(register, null);
 
   return (
-    <form action={formAction} className='flex flex-col gap-4 w-[20rem]'>
+    <div className='w-[90%] sm:w-[20rem] h-full flex justify-center items-center'>
+      <form action={formAction} className='flex flex-col justify-center items-center gap-4 w-full sm:scale-75 2xl:scale-100'>
 
-      <h2 className='text-3xl font-semibold'>No tienes una cuenta ? Registrate</h2>
-      <input
-        className="input input-bordered w-full max-w-xs"
-        autoComplete='off'
-        name="username"
-        type="text"
-        placeholder="Usuario"
-        defaultValue={formState?.prevState?.username} />
-      <p className='text-orange-500 italic min-h-6'>{formState?.errors?.username}</p>
-
-      <div className='relative flex items-center justify-end'>
-
+        <h2 className='text-xl font-semibold text-left w-full'>No tienes una cuenta ? Registrate</h2>
         <input
           className="input input-bordered w-full max-w-xs"
           autoComplete='off'
-          name="userpassword"
-          type={showPassword ? "text" : "password"}
-          placeholder="Contraseña"
-          defaultValue={formState?.prevState?.userpassword} />
+          name="username"
+          type="text"
+          placeholder="Usuario"
+          defaultValue={formState?.prevState?.username} />
+        <p className='text-orange-500 italic min-h-6'>{formState?.errors?.username}</p>
 
-        <button className="p-2 absolute right-4" type="button" onClick={() => setShowPassword(prev => !prev)}>
-          {showPassword ? <CloseEyeSVG className='size-6' currentColor='white' /> : <OpenEyeSVG className='size-6' currentColor='white' />}
-        </button>
-      </div>
+        <div className='relative flex items-center justify-center w-full'>
 
-      <p className='text-orange-500 italic min-h-6'>{formState?.errors?.userpassword}</p>
+          <input
+            className="input input-bordered w-full max-w-xs"
+            autoComplete='off'
+            name="userpassword"
+            type={showPassword ? "text" : "password"}
+            placeholder="Contraseña"
+            defaultValue={formState?.prevState?.userpassword} />
 
-      <button className='btn btn-primary tracking-wide font-semibold' type="submit">{isPending ? <span className="loading loading-spinner"></span> : "Registrar"}</button>
+          <button className="p-2 absolute right-4" type="button" onClick={() => setShowPassword(prev => !prev)}>
+            {showPassword ? <CloseEyeSVG className='size-6 pt-1 text-slate-700' currentColor='currentColor' /> : <OpenEyeSVG className='size-6 text-slate-700' currentColor='currentColor' />}
+          </button>
+        </div>
 
-      <div className="w-full flex justify-end">
-        <Link className='link link-primary' href="/">Ingresa</Link>
-      </div>
+        <p className='text-orange-500 italic min-h-6'>{formState?.errors?.userpassword}</p>
 
-    </form>
+        <button className='btn btn-primary tracking-wide font-semibold w-full' type="submit">{isPending ? <span className="loading loading-spinner"></span> : "Registrar"}</button>
+
+        <div className="w-full flex justify-end">
+          <Link className='link' href="/">Ingresa</Link>
+        </div>
+
+      </form>
+    </div>
   )
 }
 

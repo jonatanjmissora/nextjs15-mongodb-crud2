@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { cookies } from "next/headers"
-import { getCollection } from "../mongoConnect"
 
 export default async function setUserToCookie(username: string, userId: string) {
 

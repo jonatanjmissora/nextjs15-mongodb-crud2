@@ -25,7 +25,7 @@ export default function NotesPagination({ totalNotes, page }: { totalNotes: numb
   }
 
   return (
-    <div className="flex gap-3 py-2 mt-12 sm:mt-0">
+    <div className="flex gap-3 py-2 mt-12 sm:mt-0 sm:scale-75 2xl:scale-100">
       {pageArray.map(pageElement =>
 
         <span

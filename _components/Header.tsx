@@ -15,23 +15,18 @@ export default async function Header() {
   return (
     <div className="navbar flex justify-between text-slate-200  px-4">
       <Link href={"/"} className="btn btn-ghost text-xl">K@to</Link>
-      <nav>
+      {user && (<> <nav>
         {
           NavLinks.map((link, i) => (
             <HeaderLink key={i} href={link.href} text={link.text} />
           ))
         }
       </nav>
-      <div className="flex-none">
-        {
-          user
-
-          && <form action={logout}>
+        <div className="flex-none">
+          <form action={logout}>
             <button className='btn btn-primary'>{user.username}</button>
           </form>
-
-        }
-      </div>
+        </div></>)}
     </div>
   )
 }

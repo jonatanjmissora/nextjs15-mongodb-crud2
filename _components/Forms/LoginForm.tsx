@@ -12,11 +12,11 @@ export default function LoginForm() {
   const [formState, formAction, isPending] = useActionState(login, null);
 
   return (
-    <div className='w-[20rem] h-full flex justify-center items-center'>
+    <div className='w-[90%] sm:w-[20rem] h-full flex justify-center items-center'>
 
-      <form action={formAction} className='flex flex-col gap-4 w-full'>
+      <form action={formAction} className='flex flex-col justify-center items-center gap-4 w-full sm:scale-75 2xl:scale-100'>
 
-        <h2 className='text-xl font-semibold'>Ya tienes una cuenta ? Ingresa</h2>
+        <h2 className='text-xl font-semibold text-left w-full'>Ya tienes una cuenta ? Ingresa</h2>
         <input
           className="input input-bordered w-full max-w-xs"
           autoComplete='off'
@@ -25,7 +25,7 @@ export default function LoginForm() {
           placeholder="Usuario"
           defaultValue={formState?.prevState?.username} />
         <p className='text-orange-500 italic min-h-6'>{formState?.errors.username}</p>
-        <div className='relative flex items-center justify-end'>
+        <div className='relative flex items-center justify-center w-full'>
 
           <input
             className="input input-bordered w-full max-w-xs"
@@ -40,7 +40,7 @@ export default function LoginForm() {
           </button>
         </div>
         <p className='text-orange-500 italic min-h-6'>{formState?.errors.userpassword}</p>
-        <button className='btn btn-primary tracking-wide font-semibold'>{isPending ? <span className="loading loading-spinner"></span> : "Ingresar"}</button>
+        <button className='btn btn-primary tracking-wide font-semibold w-full'>{isPending ? <span className="loading loading-spinner"></span> : "Ingresar"}</button>
 
         <div className="w-full flex justify-end">
           <Link className='link' href="/register">Registrate</Link>

@@ -5,3 +5,10 @@ export type UserType = {
   username: string;
   userpassword: string;
 }
+
+export type TokenType = {
+  username: string;
+  _id: string;
+  exp: number;
+  iat: number;
+}

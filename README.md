@@ -1,9 +1,11 @@
 
-![alt text](/public/preview.webp "preview image repository")
+![alt text](/public/preview-desk.webp "preview image repository")
+![alt text](/public/preview-mobil.webp "preview image repository")
 # Info:
-Testeamos distintas implementaciones de forms en nextjs15 con serverActions. 
+Probamos un CRUD con conexion a mongoDB. Server actions. 
       
 # Utilizamos:
+-  utilizamos mongodb package para la conexion.
 -  zod como validacion y tipo.
 -  toast para mostrar resultado.
 -  useState para mostrar errores o conservar los valores del input luego de llamar a la accion del form.

@@ -36,14 +36,14 @@ export default function LoginForm() {
             defaultValue={formState?.prevState?.userpassword} />
 
           <button className="p-2 absolute right-4" type="button" onClick={() => setShowPassword(prev => !prev)}>
-            {showPassword ? <CloseEyeSVG className='size-6' currentColor='white' /> : <OpenEyeSVG className='size-6' currentColor='white' />}
+            {showPassword ? <CloseEyeSVG className='size-6 pt-1 text-slate-700' currentColor='currentColor' /> : <OpenEyeSVG className='size-6 text-slate-700' currentColor='currentColor' />}
           </button>
         </div>
         <p className='text-orange-500 italic min-h-6'>{formState?.errors.userpassword}</p>
         <button className='btn btn-primary tracking-wide font-semibold'>{isPending ? <span className="loading loading-spinner"></span> : "Ingresar"}</button>
 
         <div className="w-full flex justify-end">
-          <Link className='link link' href="/register">Registrate</Link>
+          <Link className='link' href="/register">Registrate</Link>
         </div>
 
       </form>

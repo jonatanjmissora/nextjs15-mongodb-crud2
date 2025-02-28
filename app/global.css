@@ -13,8 +13,19 @@
     --card-width: calc(var(--card-height) * 1.5);
 }
 
+@media (max-width: 1024px) {
+    :root {
+        --card-height: 20vh;
+        --card-width: 100%;
+    }
+    .card3 {
+        background: red;
+    }
+}
+
 @media (max-width: 720px) {
     :root {
+        --card-height: 30vh;
         --card-width: 100%;
     }
 }

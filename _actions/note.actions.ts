@@ -22,16 +22,6 @@ export const getCachedUserNotes = unstable_cache(async (userId: ObjectId) => {
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const insertNote = async (userId: string, newNote: NoteType) => {
-
-  const user = await getUserFromCookie() as TokenType
-  if (!user || user._id !== userId) return []
-
-  const notesCollection = await getCollection("notes")
-  return await notesCollection.insertOne(newNote)
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const createNote = async (userId: string, newNote: NoteType) => {
 
   const failObject = {
@@ -56,7 +46,8 @@ export const createNote = async (userId: string, newNote: NoteType) => {
 
   try {
     // db validation
-    const res = await insertNote(userId, data)
+    const notesCollection = await getCollection("notes")
+    const res = await notesCollection.insertOne(newNote)
     if (!res.insertedId.toString()) {
       failObject.errors.content = "Error en el servidor"
       return failObject
@@ -87,7 +78,6 @@ export const editNote = async (userId: string, id: string, newNote: NoteType) =>
   }
 
   const user = await getUserFromCookie() as TokenType
-  console.log("ACA LLEGO", user._id, " - -", userId)
   if (!user || user._id !== userId) return failObject
 
   //  data validation

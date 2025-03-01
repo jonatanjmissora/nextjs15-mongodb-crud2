@@ -2,7 +2,7 @@
 ![alt text](/public/preview-desk.webp "preview image repository")
 ![alt text](/public/preview-mobil.webp "preview image repository")
 # Info:
-Probamos un CRUD con conexion a mongoDB. Server actions. 
+Probamos un CRUD con conexion a mongoDB. Se trata de leer, crear, editar o borrar una serie de tarjetas de superheroes. Server actions. 
       
 # Utilizamos:
 -  utilizamos mongodb package para la conexion.
@@ -13,256 +13,149 @@ Probamos un CRUD con conexion a mongoDB. Server actions.
 -  useActionState.
 
 ****************************
-01 - Simple Action form
-==========================
+Note Form
+==========
 
 ```javascript
-        const [inputFields, ...] = useState()\
-        const [errors, ...] = useState()\
-        const [serverResponse, ...] = useState()
+    export default function NoteForm({ userId, note }: { userId: string, note?: NoteFixType }) {
 
-        const formAction = async(formData: FormData) => {
-
-        const title = formData.get("title") as string\
-        const content = formData.get("content") as string\
-        setInputFields({ title, content })\
-        const newTodo = { title, content }
-
-        //client validation\
-        const { success, data, error } = todoSchema.safeParse(newTodo)\
-        if (!success) {\
-            const { title: titleError, content: contentError } = error.flatten().fieldErrors\
-            // aca coloco en el useState `errors` y muestro en toast\
-        }
-
-        //server action and validation
-        const serverResponse = await addTodo(data)
-        if (!serverResponse.success) {
-            // aca coloco en el useState `serverResponse` y muestro en toast
-        }
-
-        //si todo salio bien, toast, muestro `serverResponse` y reset de `inputFields`
-
-        }
-
-        return (
-                <form action={formAction}>
-                    <Input label="title" defaultValue={inputFields.title} error={errors.title} />
-                    <SubmitBtn>   // useFormState
-                    {
-                        serverResponse?.message ...
-                    }
-                </form>
-        )
-```
-
-*************************
-02 - RHF + ServerAction
-===========================
-
-```javascript
-        const [serverResponse, ...] = useState()
-        const {...} = useForm<TodoType>({ resolver: zodResolver(todoSchema) })
-
-        const onSubmit: SubmitHandler<TodoType> = async (data) => {
-
-        // la validacion del cliente la hace RHF + zod
-
-        setServerResponse({ success: false, message: "" })
-        const response = await addTodo(data)
-        if (!response.success) {
-          toast.error("Error en el servidor")
-        }
-        else {
-          toast.success("Todo creado exitosamente")
-          reset()
-        }
-        setServerResponse(response)
-      }
-
-      return (
-        <form onSubmit={handleSubmit(onSubmit)} >
-          <InputRHF label={"title"} error={errors?.title?.message || ""} register={register} />
-          <button ... isSubmitting>
-          {
-            serverResponse?.message ...
-          }
-        </form>
-      )
-```
-
-************************
-03 - useActionState
-=======================
-
-```javascript
-      const [formState, formAction, isPending] = useFormHook()
+      const { formState, formAction, isPending } = useFormState({ userId, note })
 
       return (
         <form action={formAction} >
-          <Input label='title' defaultValue={formState?.prevState?.title || ""} error={formState?.errors?.title || ""} />
-          <button ... isPending>
-          {
-            serverResponse?.message ...
-          }
+
+          <input ... defaultValue={formState?.prevState?.title || note?.title || ""}/>
+          <p>{formState?.errors?.title}</p>
+
+          <input ... defaultValue={formState?.prevState?.content || note?.content || ""}/>
+          <p>{formState?.errors?.content}</p>
+
+          <button disabled={isPending}>editar - crear</button>
+        
         </form>
       )
+```
 
-      export type ResType = {
-      success: boolean;
-      prevState: Record<string, string>,
-      errors: Record<string, string>,
-      server?: string,
-      } | null
+****************************
+useFormState Hook
+==================
 
-      const useFormHook = () => {
+```javascript
+      export default function useFormState({ userId, note }: { userId: string, note?: NoteFixType }) {
 
-        const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData): Promise<ResType> => {
-    
-          const newTodo = Object.fromEntries(formData.entries())
-          const responseObj = {
-            success: false,
-            prevState: newTodo as TodoType,
-            errors: { title: "", content: "" },
-            server: ""
-          }
+        const router = useRouter()
 
-          // client validation
-          const { success, data, error } = todoSchema.safeParse(newTodo)
+        const [formState, formAction, isPending] = useActionState(async (prevState: ServerResponse, formData: FormData) => {
+          const { title, content } = Object.fromEntries(formData.entries())
+
+          if (title.toString().trim() === "" && content.toString().trim() === "") return
+
+          const newNote = { title: ... }
+          // client validation con zod
+          const { success, data, error } = noteSchema.safeParse(newNote)
           if (!success) {
-            responseObj.errors =
-            toast.error("Error Cliente")
-            return responseObj
+            ...
           }
 
-          // server validation ...
+          // db response
+          const res = note?._id
+            ? await editNote(userId, note?._id, data)
+            : await createNote(userId, data)
 
-          // si todo va bien
-          toast.success("Todo añadido")
-          responseObj.success = true
-          responseObj.server = message
-          responseObj.prevState = { title: "", content: "" }
-          return responseObj
+          if (res?.success) {...}
+          else {...}
 
         }, null)
 
-        return [formState, formAction, isPending] as const
+        return { formState, formAction, isPending }
+
       }
 ```
 
-***************************
-04 - RHF + useActionState 
-=============================
-(mucha mezcla)
+****************************
+server actions
+===============
 
 ```javascript
-      const { register, reset, formState: { errors }, handleSubmit } = useForm<TodoType>({ resolver: zodResolver(todoSchema) })
+    export const createNote = async (userId: string, newNote: NoteType) => {
 
-      const [formState, formAction, isPending] = useFormHookOnlyServer(reset);
-    
-      const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
-        evt.preventDefault()
-        handleSubmit(() => {
-          startTransition(() => formAction(new FormData(formRef.current!)))
-        })(evt);
+      const failObject = {
+        success: false,
+        prevState: { title: newNote?.title, content: newNote?.content },
+        errors: { title: "", content: "" }
       }
 
-      return (
-        <form ref={formRef} action={formAction} onSubmit={onSubmit}>
-          <InputRHF label={"title"} defaultValue={""} error={errors?.title?.message || ""} register={register} />
-          <button ... isPending>
-          {
-            serverResponse?.message ...
-          }
+      const user = await getUserFromCookie() as TokenType
+      if (!user || user._id !== userId) return failObject
 
-        </form>
-      )
+      // data validation
+      const { success, data, error } = noteSchema.safeParse(newNote)
+      if (!success) { ... }
 
-      export const useFormHookOnlyServer = (reset: UseFormReset<{ title: string; content: string; }>) => {
+      try {
+        // db validation
+        const notesCollection = await getCollection("notes")
+        const res = await notesCollection.insertOne(newNote)
+        if (!res.insertedId.toString()) { ... }
 
-        const [formState, formAction, isPending] = useActionState(async (prevState: ResType, formData: FormData): Promise<ResType> => {
-        const newTodo = Object.fromEntries(formData.entries()) as TodoType
-
-        // llamada a server action y validacion
-
-        ...
-        }, null)
-
-        return [formState, formAction, isPending] as const
-       }
-```
-
-**************************************
-05 - useActionState + RHF + Modal
-=====================================
-
-Son 2 formularios, el original, y otro para confirmar la operacion. El primero colecta los datos, y los verifica con RHF. Luego en el onSubmit,
-almaceno los `inputFields` y cambio el booleano `showConirm` para intercambiar en pantalla los formularios. Con `inputFields` puedo pasar los valores
-de un formulario al otro
-
-```javascript
-        const [inputValues, setInputValues] = useState({ title: "", content: "" })
-        const [showConfirm, setShowConfirm] = useState<boolean>(false)
-        const [serverResponse, setServerResponse] = useState({ success: false, message: "" })
-
-        return (
-          <>
-            {
-              showConfirm
-                ? (
-                  <ServerForm
-                    inputValues={inputValues}
-                    setInputValues={setInputValues}
-                    setShowConfirm={setShowConfirm}
-                    setServerResponse={setServerResponse}
-                  />
-                )
-                : (
-                  <ClientForm
-                    inputValues={inputValues}
-                    setInputValues={setInputValues}
-                    setShowConfirm={setShowConfirm}
-                    serverResponse={serverResponse}
-                  />
-                )
-            }
-          </>
-        )
-      }
-    
-      export const ClientForm = ({ inputValues, setInputValues, setShowConfirm, serverResponse }:
-
-        const { register, formState: { errors }, handleSubmit } = useForm<TodoType>({ resolver: zodResolver(todoSchema) })
-
-        const onSubmit: SubmitHandler<TodoType> = (data) => {
-          const title = data?.title || ""
-          const content = data?.content || ""
-          setShowConfirm(prev => !prev)
-          setInputValues({ title, content })
+        revalidateTag('notes')
+        return {
+          success: true,
+          prevState: { title: newNote.title, content: newNote.content },
+          errors: { title: "", content: "" }
         }
 
-        return (
-          <form onSubmit={handleSubmit(onSubmit)} >
-              <InputRHF label='title' defaultValue={inputValues.title} error={errors?.title?.message} register={register} />
-              <button type="submit" className="btn btn-primary" >Crear</button>
-              {
-                serverResponse?.message ...
-              }
-          </form>
+      } catch (error) {
+        failObject.errors.content = getErrorMessage(error)
+        return failObject
+      }
+
+    }
+```
+*********************************************
+```javascript
+    export const editNote = async (userId: string, id: string, newNote: NoteType) => {
+
+      const failObject = {
+        success: false,
+        prevState: { title: newNote.title, content: newNote.content },
+        errors: { title: "", content: "" }
+      }
+
+      const user = await getUserFromCookie() as TokenType
+      if (!user || user._id !== userId) return failObject
+
+      //  data validation
+      const { success, data, error } = noteSchema.safeParse(newNote)
+      if (!success) { ... }
+
+      try {
+        const { title, content } = data
+        const notesCollection = await getCollection("notes")
+        // db validation
+        const res = await notesCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: { "title": title, "content": content }
+          }
         )
+        if (res.modifiedCount !== 1) {
+          failObject.errors.content = "Error al editar nota"
+          return failObject
+        }
 
+        revalidateTag('notes')
+        return {
+          success: true,
+          prevState: { title, content },
+          errors: { title: "", content: "" }
+        }
+      } catch (error) {
+        failObject.errors.content = getErrorMessage(error)
+        return failObject
+      }
 
-      export const ServerForm = ({ inputValues, setInputValues, setShowConfirm, setServerResponse }:
-
-        const [, formAction, isPending] = useFormHook(setShowConfirm, setServerResponse, setInputValues)
-  
-        return (
-           <form action={formAction}>
-              <Input label='title' defaultValue={inputValues.title} className="hidden" />
-              <button type="submit" ...isPending>Confirmar</button>
-              <button type="button" onClick={() => setShowConfirm(prev => !prev)}>Cancelar</button>
-           </form>
-        )
+    }
 ```
 
 ![alt text](https://avatars.githubusercontent.com/u/68980231?s=400&u=47296af9dbc2dba8be2e39a106545ddad55f98c7&v=4 "My avatar image")

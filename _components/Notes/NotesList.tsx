@@ -12,7 +12,7 @@ export default async function NotesList({ user, page }: { user: NoteType, page: 
   const notesToShow = sortedNotesByPin(notes, +page) as NoteType[]
 
   return (
-    <div className='flex-1 flex flex-col items-center justify-around w-full h-full overflow-hidden sm:w-3/4 py-12 sm:py-0'>
+    <div className='flex-1 flex flex-col items-center justify-around w-full h-full sm:w-3/4 py-12 sm:py-0'>
       <div className="w-full py-4 flex justify-between items-center">
         <h2 className='text-xl 2xl:text-3xl font-semibold tracking-wider'>Listado de Notas</h2>
         <Link href={`/note/new`} className='btn btn-primary'><PlusSVG /></Link>

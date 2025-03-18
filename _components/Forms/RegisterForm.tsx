@@ -17,7 +17,7 @@ export default function RegisterForm() {
 
         <h2 className='text-xl font-semibold text-left w-full'>No tienes una cuenta ? Registrate</h2>
         <input
-          className="input input-bordered w-full max-w-xs"
+          className="input input-bordered w-full max-w-xs text-slate-100"
           autoComplete='off'
           name="username"
           type="text"
@@ -28,7 +28,7 @@ export default function RegisterForm() {
         <div className='relative flex items-center justify-center w-full'>
 
           <input
-            className="input input-bordered w-full max-w-xs"
+            className="input input-bordered w-full max-w-xs text-slate-100"
             autoComplete='off'
             name="userpassword"
             type={showPassword ? "text" : "password"}

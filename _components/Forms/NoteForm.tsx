@@ -19,13 +19,13 @@ export default function NoteForm({ userId, note }: { userId: string, note?: Note
         name="title"
         type="text"
         placeholder="Titulo"
-        className="input input-bordered w-full max-w-xs"
+        className="input input-bordered w-full max-w-xs text-slate-100"
         defaultValue={formState?.prevState?.title || note?.title || ""}
       />
       <p className='text-orange-500 italic min-h-6'>{formState?.errors?.title}</p>
 
       <textarea
-        className="textarea textarea-bordered text-slate-700 text-center"
+        className="textarea textarea-bordered text-slate-100 text-center"
         placeholder="Contenido"
         name="content"
         defaultValue={formState?.prevState?.content || note?.content || ""}

@@ -2,28 +2,15 @@
 
 import Link from "next/link";
 import { NoteType } from "../../_lib/types/note.type";
-import { deleteNote } from "../../_actions/note.actions";
-import toast from "react-hot-toast";
-import DeleteNoteBtn from "./DeleteNoteBtn";
 import { EditSVG } from "../../_assets/EditSVG";
+import DeleteNoteAction from "./DeleteNoteAction";
 
-export default function NoteMenuForm({ note }: { note: string }) {
-
-  const noteFix = JSON.parse(note.toString()) as NoteType
-
-  const formAction = async (formData: FormData) => {
-    const res = await deleteNote(noteFix.author.toString(), noteFix._id.toString())
-    if (res?.error) toast.error(res.error)
-    else toast.success("Nota eliminada exitosamente")
-  }
+export default function NoteMenuForm({ note }: { note: NoteType }) {
 
   return (
     <div className='flex gap-2 items-center justify-center'>
-      <Link href={`/note/edit?noteid=${noteFix._id}`}><EditSVG /></Link>
-      <form action={formAction} className="flex justify-center items-center">
-        <input className='hidden' type="text" name="noteid" defaultValue={noteFix._id.toString()} />
-        <DeleteNoteBtn />
-      </form>
+      <Link href={`/note/edit?noteid=${note._id}`}><EditSVG /></Link>
+      <DeleteNoteAction note={note} />
     </div>
   )
 }

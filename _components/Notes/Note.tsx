@@ -3,9 +3,7 @@ import NoteMenuForm from './NoteMenuForm'
 import PinnedStar from './PinnedStar'
 
 
-export default function Note({ actualNote, index }: { actualNote: string, index: number }) {
-
-  const note = JSON.parse(actualNote) as NoteType
+export default function Note({ note }: { note: NoteType }) {
 
   return (
     <div className="card flex-1 text-gray-100">
@@ -15,7 +13,7 @@ export default function Note({ actualNote, index }: { actualNote: string, index:
         <div className='w-full flex justify-around items-center sm:scale-75 2xl:scale-100'>
           <div className='hidden sm:block'></div>
           <PinnedStar noteId={note._id.toString()} notePin={note.pinned} />
-          <NoteMenuForm note={actualNote} />
+          <NoteMenuForm note={note} />
         </div>
       </div>
     </div>

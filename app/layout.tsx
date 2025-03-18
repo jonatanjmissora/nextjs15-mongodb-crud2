@@ -4,7 +4,7 @@ import Header from "../_components/Header"
 import "./global.css"
 
 export const metadata = {
-  title: 'Next.js + mongosb',
+  title: 'Mongodb CRUD',
   description: 'App',
 }
 

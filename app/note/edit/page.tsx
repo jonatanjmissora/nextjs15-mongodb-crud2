@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { getNoteById } from '../../../_actions/note.actions'
 import NoteForm from '../../../_components/Forms/NoteForm'
 import { NoteFixType } from '../../../_lib/types/note.type'
@@ -7,7 +8,7 @@ import getUserFromCookie from '../../../_lib/utils/getUser'
 export default async function EditNotePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
 
   const user = await getUserFromCookie() as TokenType
-  if (!user) return
+  if (!user) redirect("/")
 
   const noteId = (await searchParams).noteid
 

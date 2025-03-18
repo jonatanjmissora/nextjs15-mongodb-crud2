@@ -20,7 +20,7 @@ export default async function NotesList({ user, page }: { user: NoteType, page: 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 2xl:gap-8">
 
         {notesToShow.map((note, index) =>
-          <Note key={note._id.toString()} actualNote={JSON.stringify(note)} index={index} />
+          <Note key={note._id.toString()} note={note} />
         )}
 
       </div>

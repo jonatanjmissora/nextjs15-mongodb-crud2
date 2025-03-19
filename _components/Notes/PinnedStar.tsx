@@ -4,7 +4,7 @@ import { pinNote } from '../../_actions/note.actions'
 
 export default function PinnedStar({ noteId, notePin }: { noteId: string, notePin: boolean }) {
     return (
-        <i className='' onClick={() => pinNote(noteId)}>
+        <i className='cursor-pointer' onClick={() => pinNote(noteId)}>
             {
                 notePin
                     ? <FullStarSVG />

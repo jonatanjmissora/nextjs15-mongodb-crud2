@@ -1,7 +1,7 @@
 
 import Link from 'next/link'
-import getUserFromCookie from '../_lib/utils/getUser'
 import HeaderLink from './HeaderLink'
+import getUserFromCookie from '../../_lib/utils/getUser'
 import UserName from './UserName'
 
 const NavLinks = [
@@ -13,7 +13,7 @@ export default async function Header() {
   const user = await getUserFromCookie()
 
   return (
-    <div className="flex justify-between items-center text-slate-200 px-12 p-4">
+    <div className="flex justify-between items-center text-slate-200 px-2 sm:px-12 p-4">
       <Link href={"/"} className="btn btn-ghost text-xl">K@to</Link>
       {
         user &&

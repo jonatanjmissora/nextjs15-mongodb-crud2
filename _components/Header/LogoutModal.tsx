@@ -1,17 +1,15 @@
-"use client"
-
 import { useRef } from "react"
-import SubmitBtn from "./Notes/SubmitBtn"
-import { logout } from "../_actions/user.actions"
+import { logout } from "../../_actions/user.actions"
+import SubmitBtn from "../Notes/SubmitBtn"
 
-export default function UserName({ username }: { username: string }) {
+export default function LogoutModal() {
 
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   return (
     <>
-      <button className="btn btn-primary" onClick={() => dialogRef.current?.showModal()}>
-        {username}
+      <button className="text-lg tracking-wider" onClick={() => dialogRef.current?.showModal()}>
+        cerrar sesión
       </button>
 
       <dialog ref={dialogRef} className="w-full h-full bg-transparent relative">

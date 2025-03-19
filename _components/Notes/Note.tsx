@@ -6,7 +6,7 @@ import PinnedStar from './PinnedStar'
 export default function Note({ note }: { note: NoteFixType }) {
 
   return (
-    <div className="card flex-1 text-gray-100">
+    <div className="card flex-1">
       <div>
         <p className='text-2xl sm:text-base 2xl:text-2xl tracking-wide font-semibold py-2'>{note.title.toUpperCase()}</p>
         <p className='text-xl sm:text-base 2xl:text-xl italic p-2 text-center'>{note.content}</p>

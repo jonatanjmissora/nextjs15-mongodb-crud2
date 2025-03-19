@@ -18,7 +18,7 @@ export default function LoginForm() {
 
         <h2 className='text-xl font-semibold text-left w-full'>Ya tienes una cuenta ? Ingresa</h2>
         <input
-          className="input input-bordered w-full max-w-xs text-slate-100"
+          className="input w-full max-w-xs"
           autoComplete='off'
           name="username"
           type="text"
@@ -28,7 +28,7 @@ export default function LoginForm() {
         <div className='relative flex items-center justify-center w-full'>
 
           <input
-            className="input input-bordered w-full max-w-xs text-slate-100"
+            className="input w-full max-w-xs"
             autoComplete='off'
             name="userpassword"
             type={showPassword ? "text" : "password"}
@@ -40,7 +40,7 @@ export default function LoginForm() {
           </button>
         </div>
         <p className='text-orange-500 italic min-h-6'>{formState?.errors.userpassword}</p>
-        <button className='btn btn-primary tracking-wide font-semibold w-full'>{isPending ? <span className="loading loading-spinner"></span> : "Ingresar"}</button>
+        <button className='btn btn-primary tracking-wide font-semibold w-full'>{isPending ? <span className="loading loading-spinner text-black"></span> : "Ingresar"}</button>
 
         <div className="w-full flex justify-end">
           <Link className='link' href="/register">Registrate</Link>

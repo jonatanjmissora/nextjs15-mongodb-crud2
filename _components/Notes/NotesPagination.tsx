@@ -30,7 +30,7 @@ export default function NotesPagination({ totalNotes, page }: { totalNotes: numb
 
         <span
           key={pageElement}
-          className={`btn ${+page === pageElement + 1 && "btn-primary border border-slate-600"}`}
+          className={`btn ${+page === pageElement + 1 ? "btn-primary border border-slate-600" : "btn-ghost"}`}
           onClick={() => handleClick((pageElement + 1).toString())}
         >
           {pageElement + 1}

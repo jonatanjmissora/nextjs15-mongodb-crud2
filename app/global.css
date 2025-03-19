@@ -10,6 +10,22 @@
 
 :root {
     --card-height: 30vh;
+
+    --color-primary: rgb(146, 39, 218);
+    --color-primary-hover: rgb(189, 105, 245);
+    --color-primary25: rgb(223, 183, 250);
+    --color-secondary: rgb(59, 12, 30);
+    --color-secondary-hover: rgb(83, 20, 59);
+
+    --black: #222;
+    --black80: #333333aa;
+    --black25: #44444480;
+
+    --white: #eee;
+    --white80: #eeeeeecc;
+    --white25: #eeeeee80;
+
+    --bg-card: gray;
 }
 
 @media (min-width: 720px) {
@@ -34,15 +50,12 @@ body {
     background: linear-gradient(20deg, #090909, #292929);
 }
 
-input {
-    color: #222;
-    text-align: center;
-    background: #aaa;
-}
-
 dialog::backdrop {
-    background-color: rgb(0, 0, 0, 0.6);
+    background-color: rgb(0, 0, 0, 0.9);
     backdrop-filter: blur(2px);
+}
+input:focus, textarea:focus {
+    outline: 2px solid var(--color-primary);
 }
 
 .card {
@@ -61,7 +74,6 @@ dialog::backdrop {
 
 .card:hover {
     background-position: 0;
-    /* transform: scale(1.05); */
 }
 
 .card::before,
@@ -116,6 +128,7 @@ dialog::backdrop {
 
 
 
+
 @keyframes rotate {
     0% {
         transform: rotate(0deg);
@@ -135,3 +148,37 @@ dialog::backdrop {
         --rotate: 360deg;
     }
 }
+
+@layer components {
+    .btn {
+        @apply px-6 py-2 text-[var(--white)] rounded-lg transition-colors duration-150 shadow tracking-wider font-semibold flex justify-center items-center
+    }
+    .btn-square {
+        @apply p-2
+    }
+    .btn-primary {
+      @apply bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)]
+    }
+    .btn-secondary {
+        @apply bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)]
+    }
+    .btn-error {
+      @apply bg-[#ff000080] hover:bg-[#ff000040]
+    }
+    .btn-success {
+      @apply bg-[#00800080] hover:bg-[#00800040]
+    }
+    .btn-ghost {
+      @apply border border-black/10 bg-transparent hover:bg-[var(--black80)]
+    }
+    .btn-active {
+        @apply bg-[#1b1b1b]
+    }
+  
+    .input {
+      @apply bg-[var(--white80)] py-2 px-4 rounded-lg shadow text-[var(--black)] text-center hover:bg-[var(--color-primary25)]
+    }
+    .input::placeholder {
+      @apply text-[var(--black80)]
+    }
+  }

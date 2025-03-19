@@ -6,10 +6,10 @@ export default function SubmitBtn() {
 
   return (
     <button
-      className="flex-1 btn btn-primary tracking-wider font-bold"
+      className="flex-1 btn btn-primary tracking-wider font-bold text-xl"
       disabled={pending}
       type="submit" >
-      {pending ? <span className="loading loading-spinner"></span> : "Si"}
+      {pending ? <span className="loading loading-spinner text-black"></span> : "Si"}
     </button>
 
   )

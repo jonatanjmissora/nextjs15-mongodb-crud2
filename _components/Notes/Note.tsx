@@ -1,9 +1,9 @@
-import { NoteType } from '../../_lib/types/note.type'
+import { NoteFixType, NoteType } from '../../_lib/types/note.type'
 import NoteMenuForm from './NoteMenuForm'
 import PinnedStar from './PinnedStar'
 
 
-export default function Note({ note }: { note: NoteType }) {
+export default function Note({ note }: { note: NoteFixType }) {
 
   return (
     <div className="card flex-1 text-gray-100">

@@ -5,14 +5,14 @@ import { deleteNote } from "../../_actions/note.actions";
 import TrashSVG from "../../_assets/TrashSVG";
 import { useRef } from "react";
 import SubmitBtn from "./SubmitBtn";
-import { NoteType } from "../../_lib/types/note.type";
+import { NoteFixType } from "../../_lib/types/note.type";
 
-export default function DeleteNoteAction({ note }: { note: NoteType }) {
+export default function DeleteNoteAction({ note }: { note: NoteFixType }) {
 
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   const formAction = async () => {
-    const res = await deleteNote(note.author.toString(), note._id.toString())
+    const res = await deleteNote(note.author.toString(), note._id)
     if (res?.error) toast.error(res.error)
     else toast.success("Nota eliminada exitosamente")
   }

@@ -6,7 +6,8 @@ import { revalidateTag, unstable_cache } from "next/cache";
 import { noteSchema, NoteType } from "../_lib/schema/schema.note";
 import { getErrorMessage } from "../_lib/utils/getErrorMessage";
 import getUserFromCookie from "../_lib/utils/getUser";
-import { TokenType, UserType } from "../_lib/types/user.types";
+import { TokenType } from "../_lib/types/user.types";
+import { NoteFixType } from "../_lib/types/note.type";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const getCachedUserNotes = unstable_cache(async (userId: ObjectId) => {
@@ -33,8 +34,15 @@ export const createNote = async (userId: string, newNote: NoteType) => {
   const user = await getUserFromCookie() as TokenType
   if (!user || user._id !== userId) return failObject
 
+  const note = {
+    title: newNote.title,
+    content: newNote.content,
+    author: userId,
+    pinned: false,
+  }
+
   // data validation
-  const { success, data, error } = noteSchema.safeParse(newNote)
+  const { success, data, error } = noteSchema.safeParse(note)
   if (!success) {
     const { title: titleError, content: contentError } = error.flatten().fieldErrors
     failObject.errors = {
@@ -47,7 +55,7 @@ export const createNote = async (userId: string, newNote: NoteType) => {
   try {
     // db validation
     const notesCollection = await getCollection("notes")
-    const res = await notesCollection.insertOne(newNote)
+    const res = await notesCollection.insertOne(note)
     if (!res.insertedId.toString()) {
       failObject.errors.content = "Error en el servidor"
       return failObject
@@ -76,7 +84,6 @@ export const editNote = async (userId: string, id: string, newNote: NoteType) =>
     prevState: { title: newNote.title, content: newNote.content },
     errors: { title: "", content: "" }
   }
-
   const user = await getUserFromCookie() as TokenType
   if (!user || user._id !== userId) return failObject
 
@@ -136,7 +143,7 @@ export const deleteNote = async (userId: string, noteId: string) => {
 
 export const pinNote = async (noteId: string) => {
   const notesCollection = await getCollection("notes")
-  const actualNote = await notesCollection.findOne({ "_id": new ObjectId(noteId) }) as NoteType
+  const actualNote = await notesCollection.findOne({ "_id": new ObjectId(noteId) })
   const newPin = !actualNote.pinned
   await notesCollection.updateOne(
     { _id: new ObjectId(noteId) },

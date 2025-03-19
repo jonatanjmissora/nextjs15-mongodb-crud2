@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { register } from '../../_actions/user.actions'
 import { useActionState } from "react";
+import SpinnerSVG from '../../_assets/SpinnerSVG';
 
 export default function RegisterForm() {
 
@@ -18,7 +19,7 @@ export default function RegisterForm() {
       <p className='text-orange-500 italic min-h-6'>{formState?.errors?.username}</p>
       <input autoComplete='off' name="userpassword" type="password" placeholder="Contraseña" className="input w-full max-w-xs" defaultValue={formState?.prevState?.userpassword} />
       <p className='text-orange-500 italic min-h-6'>{formState?.errors?.userpassword}</p>
-      <button className='btn btn-primary tracking-wide font-semibold'>{isPending ? <span className="loading loading-spinner text-black"></span> : "Registrar"}</button>
+      <button className='btn btn-primary tracking-wide font-semibold'>{isPending ? <SpinnerSVG className='size-7' /> : "Registrar"}</button>
 
       <div className="w-full flex justify-end">
         <Link className='link link-primary' href="/">Ingresa</Link>

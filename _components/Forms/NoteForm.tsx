@@ -3,6 +3,7 @@
 import { NoteFixType } from "../../_lib/types/note.type";
 import Link from "next/link";
 import useFormState from "../../_lib/hook/useFormState";
+import SpinnerSVG from "../../_assets/SpinnerSVG";
 
 export default function NoteForm({ userId, note }: { userId: string, note?: NoteFixType }) {
 
@@ -37,7 +38,7 @@ export default function NoteForm({ userId, note }: { userId: string, note?: Note
         className={`btn btn-primary text-xl py-3 tracking-wide font-semibold`}
         disabled={isPending}
         type="submit" >
-        {isPending ? <span className="loading loading-spinner text-black"></span> : note?._id ? "editar" : "crear"}
+        {isPending ? <SpinnerSVG className='size-7' /> : note?._id ? "editar" : "crear"}
       </button>
     </form>
   )

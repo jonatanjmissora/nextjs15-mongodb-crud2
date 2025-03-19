@@ -1,4 +1,5 @@
 import { useFormStatus } from "react-dom";
+import SpinnerSVG from "../../_assets/SpinnerSVG";
 
 export default function SubmitBtn() {
 
@@ -9,7 +10,7 @@ export default function SubmitBtn() {
       className="flex-1 btn btn-primary tracking-wider font-bold text-xl"
       disabled={pending}
       type="submit" >
-      {pending ? <span className="loading loading-spinner text-black"></span> : "Si"}
+      {pending ? <SpinnerSVG className='size-7' /> : "Si"}
     </button>
 
   )

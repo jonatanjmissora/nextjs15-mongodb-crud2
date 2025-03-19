@@ -17,7 +17,7 @@ export default function RegisterForm() {
 
         <h2 className='text-xl font-semibold text-left w-full'>No tienes una cuenta ? Registrate</h2>
         <input
-          className="input w-full max-w-xs"
+          className="input w-full max-w-xs text-xl py-3"
           autoComplete='off'
           name="username"
           type="text"
@@ -28,7 +28,7 @@ export default function RegisterForm() {
         <div className='relative flex items-center justify-center w-full'>
 
           <input
-            className="input w-full max-w-xs"
+            className="input w-full max-w-xs text-xl py-3"
             autoComplete='off'
             name="userpassword"
             type={showPassword ? "text" : "password"}
@@ -42,7 +42,7 @@ export default function RegisterForm() {
 
         <p className='text-orange-500 italic min-h-6'>{formState?.errors?.userpassword}</p>
 
-        <button className='btn btn-primary tracking-wide font-semibold w-full' type="submit">{isPending ? <span className="loading loading-spinner text-black"></span> : "Registrar"}</button>
+        <button className='btn btn-primary text-xl py-3 tracking-wide font-semibold w-full' type="submit">{isPending ? <span className="loading loading-spinner text-black"></span> : "Registrar"}</button>
 
         <div className="w-full flex justify-end">
           <Link className='link' href="/">Ingresa</Link>

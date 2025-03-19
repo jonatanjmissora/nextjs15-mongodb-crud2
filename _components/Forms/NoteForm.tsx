@@ -19,13 +19,13 @@ export default function NoteForm({ userId, note }: { userId: string, note?: Note
         name="title"
         type="text"
         placeholder="Titulo"
-        className="inputmax-w-xs"
+        className="input max-w-xs text-xl py-3"
         defaultValue={formState?.prevState?.title || note?.title || ""}
       />
       <p className='text-orange-500 italic min-h-6'>{formState?.errors?.title}</p>
 
       <textarea
-        className="input"
+        className="input text-xl py-3"
         placeholder="Contenido"
         name="content"
         defaultValue={formState?.prevState?.content || note?.content || ""}
@@ -34,7 +34,7 @@ export default function NoteForm({ userId, note }: { userId: string, note?: Note
       <p className='text-orange-500 italic min-h-6'>{formState?.errors?.content}</p>
 
       <button
-        className={`btn btn-primary tracking-wide font-semibold`}
+        className={`btn btn-primary text-xl py-3 tracking-wide font-semibold`}
         disabled={isPending}
         type="submit" >
         {isPending ? <span className="loading loading-spinner text-black"></span> : note?._id ? "editar" : "crear"}

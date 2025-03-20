@@ -16,10 +16,10 @@ const ThemeSwitcher = () => {
       {
         theme === "light"
 
-          ? <SunSVG className="size-5" />
-          : <MoonSVG className="size-5" />
+          ? <SunSVG className="size-5 sm:size-4 2xl:size-5" />
+          : <MoonSVG className="size-5 sm:size-4 2xl:size-5" />
       }
-      <span className='text-lg tracking-wider pb-1'>tema</span>
+      <span className='text-lg sm:text-xs 2xl:text-lg tracking-wider pb-1'>tema</span>
     </div>
   )
 }

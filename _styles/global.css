@@ -7,8 +7,6 @@
     inherits: false;
 }
 
-
-
 @media (min-width: 720px) {
     .card {
         --card-height: 25vh;
@@ -46,7 +44,7 @@ textarea:focus {
     position: relative;
     box-shadow: var(--shadow);
     border-radius: 0.75rem;
-    height: var(--card-height);
+    height: 25vh;
 }
 
 .card::before,
@@ -99,6 +97,16 @@ textarea:focus {
     background-position: 100%;
 }
 
+.modal-container {
+    opacity: 0;
+    animation: modalReveal 0.5s ease-in-out forwards;
+}
+
+.modal-menu-container {
+    opacity: 0;
+    animation: modalMenuReveal 0.5s ease-in-out forwards;
+}
+
 @keyframes rotate {
     0% {
         transform: rotate(0deg);
@@ -116,5 +124,31 @@ textarea:focus {
 
     100% {
         --rotate: 360deg;
+    }
+}
+
+@keyframes modalReveal {
+    from {
+        transform: translate(-45%, -45%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
+}
+
+@keyframes modalMenuReveal {
+    from {
+        top: 0;
+        right: -50%;
+        opacity: 0;
+    }
+
+    to {
+        top: 0;
+        right: 0;
+        opacity: 1;
     }
 }

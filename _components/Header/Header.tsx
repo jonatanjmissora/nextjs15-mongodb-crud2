@@ -15,12 +15,12 @@ export default async function Header() {
 
   return (
     <div className="flex justify-between items-center text-slate-200 px-2 sm:px-12 p-4">
-      <Link href={"/"} className="btn btn-ghost text-xl">K@to</Link>
+      <Link href={"/"} className="btn btn-ghost text-xl sm:text-xs 2xl:text-xl">K@to</Link>
       {
         user &&
         (
           <>
-            <nav className='flex space-x-4'>
+            <nav className='sm:flex space-x-4 hidden'>
               {
                 NavLinks.map((link, i) => (
                   <HeaderLink key={i} href={link.href} text={link.text} />

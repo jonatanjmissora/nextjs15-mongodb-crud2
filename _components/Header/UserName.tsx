@@ -18,7 +18,7 @@ export default function UserName({ username }: { username: string }) {
       </button>
       {
         showMenu &&
-        <div className="absolute z-10 top-16 right-3 bg-gray-700 rounded-lg p-10 shadow-lg flex flex-col gap-8 text-center items-end">
+        <div className="absolute z-10 top-16 right-3 bg-[var(--color-primary)] rounded-lg p-10 shadow-lg flex flex-col gap-8 text-center items-end">
           <p className="text-xl font-bold tracking-wider">Hola {username}</p>
           <LogoutModal />
           <ThemeSwitcher />

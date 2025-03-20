@@ -9,13 +9,11 @@
 }
 
 :root {
-    --card-height: 30vh;
-
-    --color-primary: rgb(146, 39, 218);
-    --color-primary-hover: rgb(189, 105, 245);
-    --color-primary25: rgb(223, 183, 250);
-    --color-secondary: rgb(59, 12, 30);
-    --color-secondary-hover: rgb(83, 20, 59);
+    --color-primary: #3E327B;
+    --color-primary-hover: #5f51a3;
+    --color-primary25: #9890c4;
+    --color-secondary: #262536;
+    --color-secondary-hover: #3e3d52;
 
     --black: #222;
     --black80: #333333aa;
@@ -25,14 +23,21 @@
     --white80: #eeeeeecc;
     --white25: #eeeeee80;
 
-    --bg-body: linear-gradient(20deg, #a9a9a9, #e9e9e9);
-    --bg-body-dark: linear-gradient(20deg, #090909, #292929);
+    --bg-body: linear-gradient(310deg, #9686e5, #dbd6f5);
+    --bg-body-dark: linear-gradient(310deg, #181623, #1e1b2d);
     --foreground: var(--black);
     --foreground80: var(--black80);
     --foreground25: var(--black25);
 
+    --ghost-shadow: 0 0 3px rgb(0, 0, 0, 0.3);
+    --ghost-active: rgba(78, 39, 218, 0.2);
 
-    --bg-card: gray;
+    --shadow: inset -2px -2px 2px rgba(0, 0, 0, 0.50),
+        inset 2px 2px 2px rgba(80, 80, 80, 0.25),
+        35px 5px 50px rgba(0, 0, 0, 0.75);
+    --shadow-dark: inset -2px -2px 2px rgba(0, 0, 0, 0.75),
+        inset 2px 2px 2px rgba(80, 80, 80, 0.25),
+        35px 5px 50px rgba(0, 0, 0, 0.75);
 }
 
 [data-theme='dark'] {
@@ -40,6 +45,8 @@
     --foreground: var(--white);
     --foreground75: var(--white80);
     --foreground25: var(--white25);
+    --ghost-shadow: 0 0 3px rgb(255, 255, 255, 0.25);
+    --shadow: var(--shadow-dark);
 }
 
 @media (min-width: 720px) {
@@ -77,10 +84,7 @@ textarea:focus {
 
 .card {
     position: relative;
-    box-shadow:
-        inset -2px -2px 2px rgba(0, 0, 0, 0.75),
-        inset 2px 2px 2px rgba(80, 80, 80, 0.25),
-        35px 5px 50px rgba(0, 0, 0, 0.75);
+    box-shadow: var(--shadow);
     border-radius: 0.75rem;
     height: var(--card-height);
 }
@@ -135,8 +139,22 @@ textarea:focus {
     background-position: 100%;
 }
 
+.btn-ghost {
+    box-shadow: var(--ghost-shadow);
+}
 
+.btn-ghost-active {
+    box-shadow: none;
+}
 
+.btn-ghost-active:hover {
+    box-shadow: 0px 0px 3px var(--color-primary);
+}
+
+.btn-ghost:hover {
+    box-shadow: 0px 0px 3px var(--color-primary);
+    color: var(--color-primary)
+}
 
 @keyframes rotate {
     0% {
@@ -160,7 +178,7 @@ textarea:focus {
 
 @layer components {
     .btn {
-        @apply px-6 py-2 rounded-lg transition-colors duration-150 shadow tracking-wider font-semibold flex justify-center items-center
+        @apply px-6 py-2 rounded-lg transition-colors duration-150 tracking-wider font-semibold flex justify-center items-center
     }
 
     .btn-square {
@@ -184,11 +202,11 @@ textarea:focus {
     }
 
     .btn-ghost {
-        @apply text-[var(--foreground)] border border-black/10 bg-transparent hover:bg-[var(--foreground80)]
+        @apply text-[var(--foreground)]
     }
 
-    .btn-active {
-        @apply text-[var(--foreground)] bg-[#a8a8a8]
+    .btn-ghost-active {
+        @apply text-[var(--foreground)] bg-[var(--ghost-active)]
     }
 
     .input {

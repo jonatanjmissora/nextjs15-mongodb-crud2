@@ -1,0 +1,62 @@
+@import "./global.theme.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-ghost,
+.btn-ghost-active {
+  box-shadow: var(--ghost-shadow);
+}
+
+.btn-ghost-active {
+  text-shadow: 0px 0px 2px var(--color-primary);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-ghost:hover,
+.btn-ghost-active:hover {
+  text-shadow: 0px 0px 2px var(--color-primary);
+  box-shadow: 0px 0px 3px var(--color-primary);
+}
+
+@layer components {
+  .btn {
+    @apply px-6 py-2 rounded-lg transition-colors duration-150 shadow tracking-wider font-semibold flex justify-center items-center
+  }
+
+  .btn-square {
+    @apply p-2
+  }
+
+  .btn-primary {
+    @apply text-[var(--white)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)]
+  }
+
+  .btn-secondary {
+    @apply text-[var(--white)] bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)]
+  }
+
+  .btn-error {
+    @apply text-[var(--white)] bg-[#ff000080] hover:bg-[#ff000040]
+  }
+
+  .btn-success {
+    @apply text-[var(--white)] bg-[#00800080] hover:bg-[#00800040]
+  }
+
+  .btn-ghost {
+    @apply text-[var(--foreground)] border border-black/10 bg-transparent hover:bg-[var(--foreground80)]
+  }
+
+  .btn-ghost-active {
+    @apply text-[var(--foreground)] bg-[#a8a8a8]
+  }
+
+  .input {
+    @apply bg-[var(--white80)] py-2 px-4 rounded-lg shadow text-[var(--black)] text-center hover:bg-[var(--color-primary25)]
+  }
+
+  .input::placeholder {
+    @apply text-[var(--black80)]
+  }
+}

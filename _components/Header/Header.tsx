@@ -6,6 +6,7 @@ import UserName from './UserName'
 
 const NavLinks = [
   { href: "/", text: "Links" },
+  { href: "/note/new", text: "New" }
 ]
 
 export default async function Header() {
@@ -19,7 +20,7 @@ export default async function Header() {
         user &&
         (
           <>
-            <nav>
+            <nav className='flex space-x-4'>
               {
                 NavLinks.map((link, i) => (
                   <HeaderLink key={i} href={link.href} text={link.text} />

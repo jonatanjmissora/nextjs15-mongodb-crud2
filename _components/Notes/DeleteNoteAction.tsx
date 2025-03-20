@@ -20,15 +20,15 @@ export default function DeleteNoteAction({ note }: { note: NoteFixType }) {
   return (
     <>
       <button className="" onClick={() => dialogRef.current?.showModal()}>
-        <TrashSVG className="size-5" />
+        <TrashSVG className="size-6 hover:text-[var(--color-primary-hover)]" />
       </button>
 
       <dialog ref={dialogRef} className="w-full h-full bg-transparent relative">
-        <div className="rounded-lg bg-slate-800 w-max h-max p-20 fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex items-center justify-center">
+        <div className="rounded-lg bg-[var(--color-primary25)] w-max h-max p-20 fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex items-center justify-center">
 
           <form action={formAction} className="flex flex-col justify-center items-center gap-12">
 
-            <span className="font-bold text-2xl text-slate-100 z-10 tracking-widest text-left">¿ Seguro desea eliminar la carta ?</span>
+            <span className="font-bold text-2xl text-[var(--black)] z-10 tracking-widest text-left">¿ Seguro desea eliminar la carta ?</span>
 
             <div className="flex gap-4 w-full">
               <SubmitBtn />

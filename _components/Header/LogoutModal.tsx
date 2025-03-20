@@ -8,16 +8,16 @@ export default function LogoutModal() {
 
   return (
     <>
-      <button className="text-lg tracking-wider" onClick={() => dialogRef.current?.showModal()}>
+      <button className="text-lg tracking-wider hover:text-[var(--color-primary25)]" onClick={() => dialogRef.current?.showModal()}>
         cerrar sesión
       </button>
 
       <dialog ref={dialogRef} className="w-full h-full bg-transparent relative">
-        <div className="rounded-lg bg-slate-800 w-max h-max p-20 fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex items-center justify-center">
+        <div className="rounded-lg bg-[var(--color-primary25)] w-max h-max p-20 fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex items-center justify-center">
 
           <form action={logout} className="flex flex-col justify-center items-center gap-12">
 
-            <span className="font-bold text-2xl text-slate-100 z-10 tracking-widest text-left">¿ Seguro desea cerrar sesión ?</span>
+            <span className="font-bold text-2xl text-[var(--black)] z-10 tracking-widest text-left">¿ Seguro desea cerrar sesión ?</span>
 
             <div className="flex gap-4 w-full">
               <SubmitBtn />

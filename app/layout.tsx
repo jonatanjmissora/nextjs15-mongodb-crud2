@@ -1,9 +1,6 @@
 import { Toaster } from "react-hot-toast"
 import Footer from "../_components/Footer"
-import "./global.css"
-// import "../_styles/global.css"
-// import "../_styles/global.apply.css"
-// import "../_styles/global.theme.css"
+import "../_styles/global.css"
 import Header from "../_components/Header/Header"
 import { ThemeProvider } from "next-themes"
 

@@ -5,7 +5,7 @@ import getUserFromCookie from '../../_lib/utils/getUser'
 import UserName from './UserName'
 
 const NavLinks = [
-  { href: "/", text: "Links" },
+  { href: "/", text: "Notes" },
   { href: "/note/new", text: "New" }
 ]
 

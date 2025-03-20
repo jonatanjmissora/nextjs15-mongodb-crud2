@@ -3,25 +3,26 @@
 @tailwind components;
 @tailwind utilities;
 
-.btn-ghost,
-.btn-ghost-active {
+.btn-ghost {
   box-shadow: var(--ghost-shadow);
 }
 
 .btn-ghost-active {
-  text-shadow: 0px 0px 2px var(--color-primary);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
-.btn-ghost:hover,
 .btn-ghost-active:hover {
-  text-shadow: 0px 0px 2px var(--color-primary);
   box-shadow: 0px 0px 3px var(--color-primary);
+}
+
+.btn-ghost:hover {
+  box-shadow: 0px 0px 3px var(--color-primary);
+  color: var(--color-primary)
 }
 
 @layer components {
   .btn {
-    @apply px-6 py-2 rounded-lg transition-colors duration-150 shadow tracking-wider font-semibold flex justify-center items-center
+    @apply px-6 py-2 rounded-lg transition-colors duration-150 tracking-wider font-semibold flex justify-center items-center
   }
 
   .btn-square {
@@ -45,11 +46,11 @@
   }
 
   .btn-ghost {
-    @apply text-[var(--foreground)] border border-black/10 bg-transparent hover:bg-[var(--foreground80)]
+    @apply text-[var(--foreground)]
   }
 
   .btn-ghost-active {
-    @apply text-[var(--foreground)] bg-[#a8a8a8]
+    @apply text-[var(--foreground)] bg-[var(--ghost-active)]
   }
 
   .input {

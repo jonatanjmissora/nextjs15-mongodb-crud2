@@ -15,15 +15,17 @@ export default function UserName({ username }: { username: string }) {
 
   return (
     <>
-      <button className="p-2 sm:p-0" onClick={() => setShowMenu(prev => !prev)}>
-        <UserSVG className="size-7 sm:size-5 2xl:size-7 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)]" />
-      </button>
+      <div className="w-max sm:w-28 flex justify-end">
+        <button className="p-2 sm:p-0" onClick={() => setShowMenu(prev => !prev)}>
+          <UserSVG className="size-7 sm:size-5 2xl:size-7 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)]" />
+        </button>
+      </div>
       {
         showMenu &&
         <>
 
-          <DesktopMenu username={username} setShowMenu={setShowMenu} pathname={pathname}/>
-        
+          <DesktopMenu username={username} setShowMenu={setShowMenu} pathname={pathname} />
+
         </>
       }
     </>
@@ -37,7 +39,7 @@ const DesktopMenu = ({ username, setShowMenu, pathname }: { username: string, se
   console.log(pathnameArray)
 
   return (
-    <div className="modal-menu-container fixed inset-0 z-10 bg-[var(--color-primary)] rounded-lg shadow-lg">
+    <div className="modal-menu-container fixed inset-0 z-10 bg-[var(--color-primary)] rounded-l-none sm:rounded-l-xl shadow-lg">
       <div className="w-full flex justify-between items-center p-4 px-10 sm:px-8 2xl:px-10 gap-6">
         <p className="text-xl sm:text-xs 2xl:text-xl font-bold tracking-wider pb-1">Hola {username}</p>
         <button onClick={() => setShowMenu(false)}>
@@ -45,15 +47,15 @@ const DesktopMenu = ({ username, setShowMenu, pathname }: { username: string, se
         </button>
       </div>
 
-        <nav className="flex flex-col gap-8 sm:gap-6 2xl:gap-8 text-center items-center p-10 sm:p-8 2xl:p-10 border-b border-[#ffffff10] py-20">
-          {
-            NavLinks.map(link => 
-            <div  key={link.text} className="w-full flex justify-end">
+      <nav className="flex flex-col gap-8 sm:gap-6 2xl:gap-8 text-center items-center p-10 sm:p-8 2xl:p-10 border-b border-[#ffffff10] py-20">
+        {
+          NavLinks.map(link =>
+            <div key={link.text} className="w-full flex justify-end">
               <a className={`text-2xl sm:text-xl 2xl:text-2xl w-max pl-8 text-right hover:text-[var(--color-primary-hover)] ${currentPath === link.includes && "border-b border-[var(--white)]"}`} href={link.href}>{link.text}
               </a>
-            </div> )
-          }
-        </nav>
+            </div>)
+        }
+      </nav>
 
       <div className="flex flex-col gap-8 sm:gap-6 2xl:gap-8 text-center items-end p-10 sm:p-8 2xl:p-10">
         <LogoutModal />

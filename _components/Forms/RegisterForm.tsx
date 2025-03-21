@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import CloseEyeSVG from '../../_assets/CloseEyeSVG';
 import OpenEyeSVG from '../../_assets/OpenEyeSVG';
 import { register } from '../../_actions/user.actions';
-import SpinnerSVG from '../../_assets/SpinnerSVG';
+import SubmitBtn from '../Notes/SubmitBtn';
 
 export default function RegisterForm() {
 
@@ -43,7 +43,7 @@ export default function RegisterForm() {
 
         <p className='text-orange-500 italic min-h-6'>{formState?.errors?.userpassword}</p>
 
-        <button className='btn btn-primary text-xl py-3 tracking-wide font-semibold w-full' type="submit">{isPending ? <SpinnerSVG className='size-7' /> : "Registrar"}</button>
+        <SubmitBtn text='Registrar' />
 
         <div className="w-full flex justify-end">
           <Link className='link' href="/">Ingresa</Link>

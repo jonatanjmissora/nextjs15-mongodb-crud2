@@ -49,9 +49,9 @@ export const register = async (prevState: ResponseType, formData: FormData) => {
   const { success, data, error } = userSchema.safeParse({ username, userpassword })
   if (!success) {
     const { username: userError, userpassword: passwordError } = error.flatten().fieldErrors
-    registerResponse.errors = { 
-      username: userError ? userError[0] : "", 
-      userpassword: passwordError ? passwordError[0] : "" 
+    registerResponse.errors = {
+      username: userError ? userError[0] : "",
+      userpassword: passwordError ? passwordError[0] : ""
     }
     return registerResponse
   }
@@ -100,9 +100,9 @@ export const login = async function (prevState: ResponseType, formData: FormData
   const { success, data, error } = userSchema.safeParse({ username, userpassword })
   if (!success) {
     const { username: userError, userpassword: passwordError } = error.flatten().fieldErrors
-    loginResponse.errors = { 
-      username: userError ? userError[0] : "", 
-      userpassword: passwordError ? passwordError[0] : "" 
+    loginResponse.errors = {
+      username: userError ? userError[0] : "",
+      userpassword: passwordError ? passwordError[0] : ""
     }
     return loginResponse
   }

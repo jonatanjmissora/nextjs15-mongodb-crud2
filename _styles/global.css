@@ -104,7 +104,14 @@ textarea:focus {
 
 .modal-menu-container {
     opacity: 0;
-    animation: modalMenuReveal 0.5s ease-in-out forwards;
+    animation: modalMobilMenuReveal 0.5s ease-in-out forwards;
+}
+
+@media (min-width: 720px) {
+    .modal-menu-container {
+        opacity: 0;
+        animation: modalMenuReveal 0.5s ease-in-out forwards;
+    }
 }
 
 @keyframes rotate {
@@ -142,13 +149,31 @@ textarea:focus {
 @keyframes modalMenuReveal {
     from {
         top: 0;
+        left: 100%;
+        right: -20%;
+        opacity: 0;
+    }
+
+    to {
+        top: 0;
+        left: 80%;
+        right: 0%;
+        opacity: 1;
+    }
+}
+
+@keyframes modalMobilMenuReveal {
+    from {
+        top: 0;
         right: -50%;
+        left: 50%;
         opacity: 0;
     }
 
     to {
         top: 0;
         right: 0;
+        left: 0;
         opacity: 1;
     }
 }

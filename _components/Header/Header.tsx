@@ -3,11 +3,7 @@ import Link from 'next/link'
 import HeaderLink from './HeaderLink'
 import getUserFromCookie from '../../_lib/utils/getUser'
 import UserName from './UserName'
-
-const NavLinks = [
-  { href: "/", text: "Notes" },
-  { href: "/note/new", text: "New" }
-]
+import { NavLinks } from '../../_lib/constants/NavLinks'
 
 export default async function Header() {
 

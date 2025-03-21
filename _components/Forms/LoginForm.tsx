@@ -41,7 +41,7 @@ export default function LoginForm() {
           </button>
         </div>
         <p className='text-orange-500 italic min-h-6'>{formState?.errors.userpassword}</p>
-        <button className='animate-spin btn btn-primary text-xl py-3 tracking-wide font-semibold w-full'>{isPending ? <SpinnerSVG className='size-7' /> : "Ingresar"}</button>
+        <button className='btn btn-primary text-xl py-3 tracking-wide font-semibold w-full'>{isPending ? <SpinnerSVG className='size-7' /> : "Ingresar"}</button>
 
         <div className="w-full flex justify-end">
           <Link className='link' href="/register">Registrate</Link>

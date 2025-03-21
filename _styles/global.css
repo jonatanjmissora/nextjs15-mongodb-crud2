@@ -62,7 +62,7 @@ textarea:focus {
     left: -0.25%;
     border-radius: 0.75rem;
     background: linear-gradient(var(--rotate), orange, #4a00ff);
-    animation: spin 2s ease-in-out infinite;
+    animation: cardspin 2s ease-in-out infinite;
     opacity: 1;
 }
 
@@ -73,7 +73,7 @@ textarea:focus {
     border-radius: 0.75rem;
     background: linear-gradient(var(--rotate), orange, #4a00ff);
     filter: blur(30px);
-    animation: spin 2s ease-in-out infinite;
+    animation: cardspin 2s ease-in-out infinite;
     opacity: 1;
 }
 
@@ -124,7 +124,7 @@ textarea:focus {
     }
 }
 
-@keyframes spin {
+@keyframes cardspin {
     0% {
         --rotate: 0deg;
     }

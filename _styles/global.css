@@ -107,10 +107,20 @@ textarea:focus {
     animation: modalMobilMenuReveal 0.5s ease-in-out forwards;
 }
 
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
 @media (min-width: 720px) {
     .modal-menu-container {
         opacity: 0;
         animation: modalMenuReveal 0.5s ease-in-out forwards;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 

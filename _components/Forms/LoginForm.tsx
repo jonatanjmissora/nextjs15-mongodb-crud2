@@ -42,7 +42,7 @@ export default function LoginForm() {
           </button>
         </div>
         <p className='text-orange-500 italic min-h-6'>{formState?.errors.userpassword}</p>
-        <SubmitBtn text='Ingresar' />
+        <SubmitBtn className="w-full" text='Ingresar' />
 
         <div className="w-full flex justify-end">
           <Link className='link' href="/register">Registrate</Link>
